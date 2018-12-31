@@ -702,6 +702,7 @@ enum dsi_pixel_format dsi_display_get_dst_format(
  * Return: Zero on Success
  */
 int dsi_display_cont_splash_config(void *display);
+
 /*
  * dsi_display_get_panel_vfp - get panel vsync
  * @display: Pointer to private display structure
@@ -711,6 +712,8 @@ int dsi_display_cont_splash_config(void *display);
  */
 int dsi_display_get_panel_vfp(void *display,
 	int h_active, int v_active);
+
+struct dsi_display *get_main_display(void);
 
 #if defined(CONFIG_DISPLAY_SAMSUNG) || defined(CONFIG_DISPLAY_SAMSUNG_LEGO)
 int dsi_display_ctrl_init(struct dsi_display *display);

@@ -518,7 +518,8 @@ endif
 
 ifeq ($(cc-name),clang)
 ifeq ($(CONFIG_ARCH_SM8150),y)
-KBUILD_CFLAGS	+= -mcpu=cortex-a55 -mtune=cortex-a55
+KBUILD_CFLAGS	+= $(call cc-option, -mcpu=cortex-a76.cortex-a55+crc+crypto)
+KBUILD_CFLAGS	+= $(call cc-option, -mtune=cortex-a76.cortex-a55)
 endif
 ifneq ($(CROSS_COMPILE),)
 CLANG_TRIPLE	?= $(CROSS_COMPILE)

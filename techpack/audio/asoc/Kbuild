@@ -115,16 +115,19 @@ endif
 
 # for SM8150 sound card driver
 ifdef CONFIG_SND_SOC_SM8150
-	MACHINE_OBJS += sa8155.o
 	MACHINE_OBJS += sm8150.o
 	MACHINE_OBJS += machine_815x_init.o
 endif
 
 # for SM8150_CS48L32 sound card driver
 ifdef CONFIG_SND_SOC_SM8150_CS48L32
-	MACHINE_OBJS += sa8155.o
 	MACHINE_OBJS += sm8150-cs48l32.o
 	MACHINE_OBJS += machine_815x_init.o
+endif
+
+# for SA8155 sound card driver
+ifdef CONFIG_SND_SOC_SA8155
+	MACHINE_OBJS += sa8155.o
 endif
 
 # for SAMSUNG AUDIO

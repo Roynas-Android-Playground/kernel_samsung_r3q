@@ -417,7 +417,7 @@ static struct msm_vidc_common_data sm8150_common_data[] = {
 /*
 	{
 		.key = "qcom,decode-batching",
-		.value = 1,
+		.value = 0,
 	},
 */
 	{

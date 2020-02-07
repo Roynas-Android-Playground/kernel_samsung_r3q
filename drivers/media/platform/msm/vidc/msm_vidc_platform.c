@@ -490,7 +490,7 @@ static struct msm_vidc_common_data sdmmagpie_common_data_v0[] = {
 /*
 	{
 		.key = "qcom,decode-batching",
-		.value = 1,
+		.value = 0,
 	},
 */
 	{
@@ -563,7 +563,7 @@ static struct msm_vidc_common_data sdmmagpie_common_data_v1[] = {
 /*
 	{
 		.key = "qcom,decode-batching",
-		.value = 1,
+		.value = 0,
 	},
 */
 	{

@@ -182,7 +182,7 @@ ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
 export DTC_FLAGS := -@
 endif
 
-all:	$(KBUILD_DTBS) $(KBUILD_TARGET)
+all:	$(KBUILD_DTBS) $(KBUILD_TARGET) dtbo.img
 
 Image: vmlinux
 	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
@@ -201,6 +201,9 @@ PHONY += dtbs dtbs_install
 dtbs: prepare scripts
 #	$(Q)$(MAKE) $(build)=$(boot)/dts
 	$(Q)$(MAKE) $(build)=$(boot)/dts/samsung
+
+dtbo.img: scripts dtbs
+	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
 
 dtbs_install:
 	$(Q)$(MAKE) $(dtbinst)=$(boot)/dts

@@ -315,6 +315,12 @@ $(obj)/%.dtb: $(src)/%.dts FORCE
 
 dtc-tmp = $(subst $(comma),_,$(dot-target).dts.tmp)
 
+# mkdtboimg
+#----------------------------------------------------------------------------
+quiet_cmd_mkdtboimg = DTBOIMG $@
+cmd_mkdtboimg = $(PYTHON) $(srctree)/scripts/mkdtboimg.py create $@ \
+       --page_size=4096 $(filter-out FORCE,$^)
+
 # cat
 # ---------------------------------------------------------------------------
 # Concatentate multiple files together

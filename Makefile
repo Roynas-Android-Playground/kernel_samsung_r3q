@@ -496,6 +496,9 @@ ifneq ($(KBUILD_SRC),)
 endif
 
 ifeq ($(cc-name),clang)
+ifeq ($(CONFIG_ARCH_SM8150),y)
+KBUILD_CFLAGS	+= -mcpu=cortex-a55
+endif
 ifneq ($(CROSS_COMPILE),)
 CLANG_TRIPLE	?= $(CROSS_COMPILE)
 CLANG_FLAGS	+= --target=$(notdir $(CLANG_TRIPLE:%-=%))

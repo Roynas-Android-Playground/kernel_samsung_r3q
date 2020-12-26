@@ -29,6 +29,7 @@
 #include <linux/types.h>
 #include <linux/miscdevice.h>
 #include <linux/bitops.h>
+#include <linux/msm_dma_iommu_mapping.h>
 #include "ion_kernel.h"
 #include "../uapi/ion.h"
 #include "../uapi/msm_ion.h"
@@ -132,6 +133,7 @@ struct ion_buffer {
 	unsigned long private_flags;
 	size_t size;
 	void *priv_virt;
+	struct msm_iommu_data iommu_data;
 	/* Protect ion buffer */
 	struct mutex lock;
 	int kmap_cnt;

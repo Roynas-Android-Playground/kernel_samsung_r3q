@@ -1541,7 +1541,7 @@ EXPORT_SYMBOL(qpnp_get_s2_reset_onoff);
 #endif
 
 #if defined(CONFIG_SEC_PM)
-static int
+static int __maybe_unused
 qpnp_control_s2_reset(struct qpnp_pon *pon, struct qpnp_pon_config *cfg, int on)
 {
 	int rc;

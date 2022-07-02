@@ -610,6 +610,9 @@ int mms_custom_event_handler(struct mms_ts_info *info, u8 *rbuf, u8 size)
 #ifdef CONFIG_TOUCHSCREEN_MELFAS_MSS100_FOD_SUPPORT
 				info->fod_pressed = true;
 				sysfs_notify(&info->sec.fac_dev->kobj, NULL, "fod_pressed");
+				input_report_key(info->input_dev, KEY_WAKEUP, 1);
+				input_sync(info->input_dev);
+				input_report_key(info->input_dev, KEY_WAKEUP, 0);
 #else
 				input_report_key(info->input_dev, KEY_BLACK_UI_GESTURE, 1);
 				input_sync(info->input_dev);

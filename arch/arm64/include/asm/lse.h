@@ -1,3 +1,5 @@
+#define __LSE_PREAMBLE	".arch armv8-a+lse\n"
+
 /* SPDX-License-Identifier: GPL-2.0 */
 #ifndef __ASM_LSE_H
 #define __ASM_LSE_H
@@ -16,13 +18,6 @@
 .endm
 
 #else	/* __ASSEMBLER__ */
-
-#ifdef CONFIG_LTO_CLANG
-#define __LSE_PREAMBLE	".arch armv8-a+lse\n"
-#else
-__asm__(".arch_extension	lse");
-#define __LSE_PREAMBLE
-#endif
 
 /* Move the ll/sc atomics out-of-line */
 #define __LL_SC_INLINE		notrace

@@ -13,5 +13,6 @@ COMMON_FLAGS="O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CC=clang AS=llvm
 rm -rf out
 
 make O=out $COMMON_FLAGS -j$(nproc) r3q_defconfig
-cp out/.config arch/arm64/configs/r3q_defconfig
+make O=out $COMMON_FLAGS -j$(nproc) savedefconfig
+cp out/defconfig arch/arm64/configs/r3q_defconfig
 make O=out $COMMON_FLAGS -j$(nproc)

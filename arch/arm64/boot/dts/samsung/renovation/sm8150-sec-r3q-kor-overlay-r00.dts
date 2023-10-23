@@ -6597,11 +6597,6 @@
 
 			android {
 
-				vbmeta {
-					compatible = "android,vbmeta";
-					parts = "vbmeta,boot,system,vendor,product,recovery,dtbo,abl,xbl,tz,hyp";
-				};
-
 				fstab {
 					compatible = "android,fstab";
 
@@ -6610,7 +6605,7 @@
 						dev = "/dev/block/platform/soc/1d84000.ufshc/by-name/product";
 						type = "ext4";
 						mnt_flags = "ro,errors=panic";
-						fsmgr_flags = "wait,verify,avb";
+						fsmgr_flags = "wait";
 					};
 
 					vendor {
@@ -6618,7 +6613,7 @@
 						dev = "/dev/block/platform/soc/1d84000.ufshc/by-name/vendor";
 						type = "ext4";
 						mnt_flags = "ro,barrier=1,discard";
-						fsmgr_flags = "wait,verify,avb";
+						fsmgr_flags = "wait";
 					};
 				};
 			};

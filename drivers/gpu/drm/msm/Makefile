@@ -94,9 +94,11 @@ msm_drm-$(CONFIG_DRM_MSM_MDP5) += mdp/mdp_format.o \
 	mdp/mdp5/mdp5_plane.o \
 	mdp/mdp5/mdp5_smp.o \
 
+msm_drm-$(CONFIG_SEC_DISPLAYPORT_LOGGER) += \
+	dp/secdp_logger.o
+
 # sec displayport
 msm_drm-$(CONFIG_SEC_DISPLAYPORT) += dp/secdp_sysfs.o \
-	dp/secdp_logger.o \
 	dp/secdp_unit_test.o \
 	dp/secdp_aux_control.o \
 

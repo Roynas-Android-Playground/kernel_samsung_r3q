@@ -44,7 +44,7 @@ int set_freq_limit(unsigned long id, unsigned int freq);
 
 #else
 #define DVFS_ARGOS_ID	0
-int set_freq_limit(unsigned long id, unsigned int freq)
+int __weak set_freq_limit(unsigned long id, unsigned int freq)
 {
 	pr_err("%s is not yet implemented\n", __func__);
 	return 0;

@@ -163,9 +163,9 @@ static DEFINE_MUTEX(bpf_verifier_lock);
 void bpf_verifier_vlog(struct bpf_verifier_log *log,
 		       const char *fmt, va_list args)
 {
-	unsigned int n;
+	unsigned int n = 0;
 
-	n = vscnprintf(log->kbuf, BPF_VERIFIER_TMP_LOG_SIZE, fmt, args);
+//	n = vscnprintf(log->kbuf, BPF_VERIFIER_TMP_LOG_SIZE, fmt, args);
 
 	WARN_ONCE(n >= BPF_VERIFIER_TMP_LOG_SIZE - 1,
 		  "verifier log line truncated - local buffer too short\n");

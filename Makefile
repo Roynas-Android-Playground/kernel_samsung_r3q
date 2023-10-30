@@ -364,6 +364,10 @@ HOST_LFS_LIBS := $(shell getconf LFS_LIBS 2>/dev/null)
 ifneq ($(LLVM),)
 HOSTCC	= clang
 HOSTCXX	= clang++
+
+HOST_EXTRACFLAGS ?= -fuse-ld=lld
+HOST_EXTRACXXFLAGS ?= -fuse-ld=lld
+export HOST_EXTRACFLAGS HOST_EXTRACXXFLAGS
 else
 HOSTCC	= gcc
 HOSTCXX	= g++

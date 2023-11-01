@@ -8657,7 +8657,7 @@ static int msm_asoc_machine_probe(struct platform_device *pdev)
 	pdata->pm_qos_noise_wa= of_parse_phandle(pdev->dev.of_node,
 							"pm_qos_noise_wa", 0);
 
-	if (pdata->pm_qos_noise_wa) {
+	if (pdata->pm_qos_noise_wa && !pm_qos_request_active(&noise_wa_req)) {
 		dev_info(&pdev->dev,
 			"%s: pm noise\n", __func__);
 		noise_wa_req.type = PM_QOS_REQ_ALL_CORES;

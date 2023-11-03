@@ -103,11 +103,11 @@ FlashlightLevelInfo calibData[MAX_FLASHLIGHT_LEVEL] = {
 extern int cam_flash_low(struct cam_flash_ctrl *flash_ctrl,struct cam_flash_frame_setting *flash_data);
 extern int cam_flash_off(struct cam_flash_ctrl *flash_ctrl);
 
+static int last_flash_power = 0;
 static ssize_t flash_power_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
-	int rc = 0;
-	return rc;
+	return scnprintf(buf, PAGE_SIZE, "%d", last_flash_power);
 }
 
 ssize_t flash_power_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t size)
@@ -145,6 +145,7 @@ ssize_t flash_power_store(struct device *dev, struct device_attribute *attr, con
         	if (i >= MAX_FLASHLIGHT_LEVEL)
         	{
 			pr_err("%s: can't process, invalid value=%u\n", __func__, value_u32);
+			goto fail;
 		}
 	}
 
@@ -161,8 +162,11 @@ ssize_t flash_power_store(struct device *dev, struct device_attribute *attr, con
 		break;
 
 	default:
-		break;
+		goto fail;
 	}
+
+	last_flash_power = value_u32;
+fail:
 	return size;
 }
 

@@ -52,6 +52,9 @@ static inline void spk_params_exit(void)
 {
 }
 #endif
+#ifdef CONFIG_SEC_SND_ADAPTATION
+int sec_soc_platform_init(void);
+#endif
 
 void avtimer_exit(void);
 void audio_slimslave_exit(void);
@@ -65,6 +68,9 @@ void q6asm_exit(void);
 void afe_exit(void);
 void adm_exit(void);
 void adsp_err_exit(void);
+#ifdef CONFIG_SEC_SND_ADAPTATION
+void sec_soc_platform_exit(void);
+#endif
 
 #ifdef CONFIG_VOICE_MHI
 int voice_mhi_init(void);

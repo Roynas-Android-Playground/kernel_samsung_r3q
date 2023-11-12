@@ -176,7 +176,10 @@ static ssize_t q6afe_initial_cal_show(struct device *dev,
 				      struct device_attribute *attr,
 				      char *buf)
 {
-	return snprintf(buf, BUF_SZ, "%d\n", afe_get_spk_initial_cal());
+	//return snprintf(buf, BUF_SZ, "%d\n", afe_get_spk_initial_cal());
+
+	/* customizing code to support samsung amp calibration routine */
+	return snprintf(buf, BUF_SZ, "%s\n", afe_get_spk_initial_cal() ? "Enabled" : "Disabled");
 }
 
 static ssize_t q6afe_initial_cal_store(struct device *dev,
@@ -196,14 +199,16 @@ static ssize_t q6afe_initial_cal_store(struct device *dev,
 	return size;
 }
 
-static DEVICE_ATTR(initial_cal, 0644,
+static DEVICE_ATTR(initial_cal, 0664,
 	q6afe_initial_cal_show, q6afe_initial_cal_store);
 
 static ssize_t q6afe_v_vali_flag_show(struct device *dev,
 				      struct device_attribute *attr,
 				      char *buf)
 {
-	return snprintf(buf, BUF_SZ, "%d\n", afe_get_spk_v_vali_flag());
+	//return snprintf(buf, BUF_SZ, "%d\n", afe_get_spk_v_vali_flag());
+	/* customizing code to support samsung amp validation routine */
+	return snprintf(buf, BUF_SZ, "%s\n", afe_get_spk_v_vali_flag() ? "Enabled" : "Disabled");
 }
 
 static ssize_t q6afe_v_vali_flag_store(struct device *dev,

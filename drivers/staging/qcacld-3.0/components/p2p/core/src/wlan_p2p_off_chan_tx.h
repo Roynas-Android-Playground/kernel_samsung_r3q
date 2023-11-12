@@ -366,7 +366,7 @@ p2p_del_random_mac(struct wlan_objmgr_psoc *soc, uint32_t vdev_id,
  * the timer for that duration.
  *
  * Return: QDF_STATUS_SUCCESS - del successfully.
- *		other : failed to del the mac address entry.
+ *             other : failed to del the mac address entry.
  */
 QDF_STATUS
 p2p_random_mac_handle_tx_done(struct wlan_objmgr_psoc *soc, uint32_t vdev_id,

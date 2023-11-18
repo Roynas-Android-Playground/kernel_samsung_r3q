@@ -15,4 +15,4 @@ rm -rf out
 make $COMMON_FLAGS r3q_defconfig
 make $COMMON_FLAGS savedefconfig
 cp out/defconfig arch/arm64/configs/r3q_defconfig
-make O=out $COMMON_FLAGS
+make O=out $COMMON_FLAGS Image.gz-dtb dtbs

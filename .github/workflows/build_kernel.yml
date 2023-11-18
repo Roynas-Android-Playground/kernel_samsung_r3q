@@ -30,7 +30,7 @@ jobs:
       - name: Package
         run: |
           git clone https://github.com/Samsung-SM8150-Development/kernel_packaging kp
-          cp out/arch/arm64/boot/Image-dtb kp/AnyKernel3
+          cp out/arch/arm64/boot/Image.gz-dtb kp/AnyKernel3
 
       - name: Upload kernel zip
         uses: actions/upload-artifact@v3.1.2

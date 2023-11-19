@@ -628,13 +628,11 @@ int input_open_device(struct input_handle *handle)
 		if (!dev->disabled)
 			dev->users--;
 		if (!--handle->open) {
-			pr_err("sec_input: %s: dev:%s++\n", __func__, dev->name);
 			/*
 			 * Make sure we are not delivering any more events
 			 * through this handle
 			 */
 			synchronize_rcu();
-			pr_err("sec_input: %s: dev:%s--\n", __func__, dev->name);
 		}
 	}
 
@@ -681,14 +679,12 @@ void input_close_device(struct input_handle *handle)
 		dev->close(dev);
 
 	if (!--handle->open) {
-		pr_err("sec_input: %s: dev:%s++\n", __func__, dev->name);
 		/*
 		 * synchronize_rcu() makes sure that input_pass_event()
 		 * completed and that no more input events are delivered
 		 * through this handle
 		 */
 		synchronize_rcu();
-		pr_err("sec_input: %s: dev:%s--\n", __func__, dev->name);
 	}
 
 	mutex_unlock(&dev->mutex);

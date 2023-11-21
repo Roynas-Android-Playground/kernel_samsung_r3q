@@ -26,4 +26,4 @@ if [ -z $THIN ]; then
 	echo "$0: Defconfig regenerated"
 fi
 
-make O=out $COMMON_FLAGS Image.gz-dtb dtbs
+make O=out $COMMON_FLAGS Image.gz-dtb dtbo.img

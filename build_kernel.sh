@@ -17,7 +17,7 @@ if [ "$1" = "thin" ]; then
 	THIN=thinlto.config
 fi
 
-make $COMMON_FLAGS r3q_defconfig
+make $COMMON_FLAGS r3q_defconfig $THIN
 
 echo "$0: ThinLTO: ${THIN:-"Not Enabled"}"
 if [ -z $THIN ]; then

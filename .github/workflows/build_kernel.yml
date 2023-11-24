@@ -29,7 +29,7 @@ jobs:
 
       - name: Package
         run: |
-          git clone https://github.com/Samsung-SM8150-Development/kernel_packaging kp
+          git clone https://github.com/Roynas-Android-Playground/kernel_packaging kp -b for-r3q
           cp out/arch/arm64/boot/Image.gz-dtb kp/AnyKernel3
 
       - name: Upload kernel zip

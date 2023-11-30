@@ -347,6 +347,7 @@ static struct platform_driver dp_sim_driver = {
 		.name = "dp_sim",
 		.of_match_table = dt_match,
 		.suppress_bind_attrs = true,
+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
 	},
 };
 

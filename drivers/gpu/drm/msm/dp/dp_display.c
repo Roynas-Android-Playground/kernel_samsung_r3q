@@ -5263,6 +5263,7 @@ static struct platform_driver dp_display_driver = {
 		.of_match_table = dp_dt_match,
 		.suppress_bind_attrs = true,
 		.pm = &dp_pm_ops,
+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
 	},
 };
 

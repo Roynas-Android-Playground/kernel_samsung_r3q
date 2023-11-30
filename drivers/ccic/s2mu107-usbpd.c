@@ -3993,6 +3993,7 @@ static struct i2c_driver s2mu107_usbpd_driver = {
 #if defined CONFIG_PM
 		.pm	= &s2mu107_usbpd_pm,
 #endif /* CONFIG_PM */
+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
 	},
 	.probe		= s2mu107_usbpd_probe,
 	.remove		= s2mu107_usbpd_remove,

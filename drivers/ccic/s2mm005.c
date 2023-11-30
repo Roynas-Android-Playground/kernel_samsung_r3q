@@ -1817,6 +1817,7 @@ static struct i2c_driver s2mm005_usbpd_driver = {
 #if defined(CONFIG_OF)
 		.of_match_table	= s2mm005_i2c_dt_ids,
 #endif /* CONFIG_OF */
+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
 	},
 	.probe		= s2mm005_usbpd_probe,
 	//.remove		= __devexit_p(s2mm005_usbpd_remove),

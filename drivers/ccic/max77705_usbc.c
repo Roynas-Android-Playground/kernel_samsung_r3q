@@ -3811,6 +3811,7 @@ static struct platform_driver max77705_usbc_driver = {
 #ifdef CONFIG_PM
 		.pm = &max77705_usbc_pm_ops,
 #endif
+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
 	},
 	.shutdown = max77705_usbc_shutdown,
 	.probe = max77705_usbc_probe,

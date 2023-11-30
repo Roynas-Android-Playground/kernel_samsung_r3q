@@ -569,14 +569,6 @@ int sec_dc_step_charging_dt(struct sec_battery_info *battery, struct device *dev
 				}
 			}
 
-			//////// debug log ////
-			for( i = 0; i < battery->pdata->num_age_step; i++) {
-				for( j = 0; j < battery->dc_step_chg_step; j++) {
-					pr_info("%s soc arr = %d ", __func__, pdata->dc_step_chg_cond_soc[i][j]);
-				}
-				pr_info("\n");
-			}
-
 			if (ret) {
 				pr_info("%s : dc_step_chg_cond_soc read fail\n", __func__);
 				battery->dc_step_chg_type &= ~STEP_CHARGING_CONDITION_SOC;
@@ -670,14 +662,6 @@ int sec_dc_step_charging_dt(struct sec_battery_info *battery, struct device *dev
 				}
 			}
 
-			//////// debug log ////
-			for( i = 0; i < battery->pdata->num_age_step; i++) {
-				for( j = 0; j < battery->dc_step_chg_step; j++) {
-					pr_info("%s vfloat arr = %d ", __func__, pdata->dc_step_chg_val_vfloat[i][j]);
-				}
-				pr_info("\n");
-			}
-
 			if (ret) {
 				pr_info("%s : dc_step_chg_val_vfloat read fail\n", __func__);
 				battery->dc_step_chg_type &= ~STEP_CHARGING_CONDITION_FLOAT_VOLTAGE;
@@ -724,14 +708,6 @@ int sec_dc_step_charging_dt(struct sec_battery_info *battery, struct device *dev
 					pdata->dc_step_chg_val_iout[i][j] = pdata->dc_step_chg_val_iout[0][j];
 				}
 			}
-		}
-
-		//////// debug log ////
-		for( i = 0; i < battery->pdata->num_age_step; i++) {
-			for( j = 0; j < battery->dc_step_chg_step; j++) {
-				pr_info("%s iout arr = %d ", __func__, pdata->dc_step_chg_val_iout[i][j]);
-			}
-			pr_info("\n");
 		}
 
 		if (ret) {

@@ -22,7 +22,6 @@
 
 #include <linux/ccic/max77705_debug.h>
 
-#define DEBUG_MXIM
 #ifdef DEBUG_MXIM
 #define msg_maxim(format, args...) \
 pr_info("[MXIM] %s: " format "\n", __func__, ## args)

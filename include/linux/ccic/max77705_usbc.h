@@ -344,7 +344,6 @@ extern const uint8_t BOOT_FLASH_FW_PASS5[];
 void factory_execute_monitor(int);
 #endif
 
-#define DEBUG_MAX77705
 #ifdef DEBUG_MAX77705
 #define msg_maxim(format, args...) \
 		pr_info("max77705: %s: " format "\n", __func__, ## args)

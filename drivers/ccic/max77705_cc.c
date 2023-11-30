@@ -182,7 +182,7 @@ void max77705_dp_detach(void *data)
 {
 	struct max77705_usbc_platform_data *usbpd_data = data;
 
-	pr_info("%s: dp_is_connect %d\n", __func__, usbpd_data->dp_is_connect);
+	msg_maxim("%s: dp_is_connect %d\n", __func__, usbpd_data->dp_is_connect);
 
 	max77705_ccic_event_work(usbpd_data, CCIC_NOTIFY_DEV_USB_DP,
 		CCIC_NOTIFY_ID_USB_DP, 0/*attach*/, usbpd_data->dp_hs_connect/*drp*/, 0);
@@ -206,7 +206,7 @@ void max77705_notify_dr_status(struct max77705_usbc_platform_data *usbpd_data, u
 
 	if (attach == CCIC_NOTIFY_ATTACH) {
 		if (usbpd_data->current_connstat == WATER) {
-			pr_info("%s: blocked by WATER\n", __func__);
+			msg_maxim("%s: blocked by WATER\n", __func__);
 			return;
 		}
 		if (pd_data->current_dr == UFP) {
@@ -276,7 +276,7 @@ void max77705_notify_dr_status(struct max77705_usbc_platform_data *usbpd_data, u
 		if (usbpd_data->dp_is_connect == 1)
 			max77705_dp_detach(usbpd_data);
 		if (usbpd_data->acc_type != CCIC_DOCK_DETACHED) {
-			pr_info("%s: schedule_delayed_work - pd_state : %d\n",
+			msg_maxim("%s: schedule_delayed_work - pd_state : %d\n",
 					__func__, usbpd_data->pd_state);
 			if (usbpd_data->acc_type == CCIC_DOCK_HMT)
 				schedule_delayed_work(&usbpd_data->acc_detach_work,
@@ -488,7 +488,7 @@ static irqreturn_t max77705_ccistat_irq(int irq, void *data)
 			value.write_length = 1;
 			value.read_length = 1;
 			max77705_usbc_opcode_write(usbc_data, &value);
-			pr_info("%s : OPCODE(0x%02x) W_LENGTH(%d) R_LENGTH(%d) NUM(%d)\n",
+			msg_maxim("%s : OPCODE(0x%02x) W_LENGTH(%d) R_LENGTH(%d) NUM(%d)\n",
 				__func__, value.opcode, value.write_length, value.read_length,
 				pd_noti.sink_status.selected_pdo_num);
 		}
@@ -889,7 +889,7 @@ int max77705_cc_init(struct max77705_usbc_platform_data *usbc_data)
 	max77705_read_reg(usbc_data->muic, REG_CC_STATUS1, &cc_data->cc_status1);
 	usbc_data->current_connstat = (cc_data->cc_status1 & BIT_ConnStat)
 				>> FFS(BIT_ConnStat);
-	pr_info("%s: water state : %s\n", __func__, usbc_data->current_connstat ? "WATER" : "DRY");
+	msg_maxim("%s: water state : %s\n", __func__, usbc_data->current_connstat ? "WATER" : "DRY");
 
 	if (usbc_data->current_connstat) {
 		if(!usbc_data->max77705->blocking_waterevent)

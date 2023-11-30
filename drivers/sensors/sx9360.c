@@ -238,11 +238,11 @@ static void sx9360_initialize_register(struct sx9360_p *data)
 
 	for (idx = 0; idx < (sizeof(setup_reg) >> 1); idx++) {		
 		sx9360_i2c_write(data, setup_reg[idx].reg, setup_reg[idx].val);
-		pr_info("[SX9360]: %s - Write Reg: 0x%x Value: 0x%x\n",
+		pr_debug("[SX9360]: %s - Write Reg: 0x%x Value: 0x%x\n",
 			__func__, setup_reg[idx].reg, setup_reg[idx].val);
 
 		sx9360_i2c_read(data, setup_reg[idx].reg, &val);
-		pr_info("[SX9360]: %s - Read Reg: 0x%x Value: 0x%x\n\n",
+		pr_debug("[SX9360]: %s - Read Reg: 0x%x Value: 0x%x\n",
 			__func__, setup_reg[idx].reg, val);
 	}
 

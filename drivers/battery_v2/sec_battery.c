@@ -10107,6 +10107,7 @@ static struct platform_driver sec_battery_driver = {
 #ifdef CONFIG_OF
 		.of_match_table = sec_battery_dt_ids,
 #endif
+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
 	},
 	.probe = sec_battery_probe,
 	.remove = sec_battery_remove,

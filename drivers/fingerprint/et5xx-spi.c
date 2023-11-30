@@ -1414,7 +1414,8 @@ static struct spi_driver etspi_spi_driver = {
 		.name =	"egis_fingerprint",
 		.owner = THIS_MODULE,
 		.pm = &etspi_pm_ops,
-		.of_match_table = etspi_match_table
+		.of_match_table = etspi_match_table,
+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
 	},
 	.probe = etspi_probe,
 	.remove = etspi_remove,

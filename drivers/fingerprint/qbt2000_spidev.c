@@ -698,6 +698,7 @@ static struct spi_driver qbtspi_spi_driver = {
 		.name =		QBTSPI_DEV,
 		.owner = THIS_MODULE,
 		.of_match_table = qbtspi_dt_ids,
+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
 	},
 	.probe =	qbtspi_probe,
 	.remove =	qbtspi_remove,

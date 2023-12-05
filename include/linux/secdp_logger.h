@@ -51,16 +51,6 @@ int secdp_logger_init(void);
 #define secdp_logger_hex_dump(buf, pref, len)	do {} while (0)
 #define secdp_logger_init(void)					do {} while (0)
 
-#ifdef pr_debug
-#undef pr_debug
-#define pr_debug	pr_info
-#endif
-
-#ifdef DEV_DBG
-#undef DEV_DBG
-#define DEV_DBG		pr_info
-#endif
-
 #endif
 
 #endif/*_SECDP_LOGGER_H_*/

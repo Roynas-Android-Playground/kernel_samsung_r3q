@@ -9,7 +9,6 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
-#define DEBUG
 
 #include "include/sec_battery.h"
 #include "include/sec_dual_battery.h"
@@ -32,11 +31,11 @@ static int sec_dual_check_eoc_status(struct sec_dual_battery_info *battery)
 		(enum power_supply_property)POWER_SUPPLY_EXT_PROP_CHG_CURRENT, value);
 	battery->main_current_avg = value.intval;
 
-	pr_info("%s %d %d %d %d \n", __func__, battery->main_voltage_avg, battery->pdata->main_full_condition_vcell, battery->main_current_avg, battery->pdata->main_full_condition_eoc);
+	pr_debug("%s %d %d %d %d \n", __func__, battery->main_voltage_avg, battery->pdata->main_full_condition_vcell, battery->main_current_avg, battery->pdata->main_full_condition_eoc);
 	if(battery->main_voltage_avg >= battery->pdata->main_full_condition_vcell &&
 		battery->main_current_avg <= battery->pdata->main_full_condition_eoc &&
 		!(battery->full_total_status & SEC_DUAL_BATTERY_MAIN_CONDITION_DONE)) {
-		pr_info("%s Main Batt eoc condtion is done \n", __func__);
+		pr_debug("%s Main Batt eoc condtion is done \n", __func__);
 		battery->full_total_status |= SEC_DUAL_BATTERY_MAIN_CONDITION_DONE;
 		/* main supplement mode enable */
 		value.intval = 1;
@@ -55,11 +54,11 @@ static int sec_dual_check_eoc_status(struct sec_dual_battery_info *battery)
 		(enum power_supply_property)POWER_SUPPLY_EXT_PROP_CHG_CURRENT, value);
 	battery->sub_current_avg = value.intval;
 
-	pr_info("%s %d %d %d %d \n", __func__, battery->sub_voltage_avg, battery->pdata->sub_full_condition_vcell, battery->sub_current_avg, battery->pdata->sub_full_condition_eoc);
+	pr_debug("%s %d %d %d %d \n", __func__, battery->sub_voltage_avg, battery->pdata->sub_full_condition_vcell, battery->sub_current_avg, battery->pdata->sub_full_condition_eoc);
 	if(battery->sub_voltage_avg >= battery->pdata->sub_full_condition_vcell &&
 		battery->sub_current_avg <= battery->pdata->sub_full_condition_eoc &&
 		!(battery->full_total_status & SEC_DUAL_BATTERY_SUB_CONDITION_DONE)) {
-		pr_info("%s Sub Batt eoc condtion is done \n", __func__);
+		pr_debug("%s Sub Batt eoc condtion is done \n", __func__);
 		battery->full_total_status |= SEC_DUAL_BATTERY_SUB_CONDITION_DONE;
 		/* main supplement mode enable */
 		value.intval = 1;
@@ -67,7 +66,7 @@ static int sec_dual_check_eoc_status(struct sec_dual_battery_info *battery)
 			POWER_SUPPLY_PROP_CHARGE_FULL, value);
 	}
 
-	pr_info("%s full satus = 0x%x \n", __func__, battery->full_total_status);
+	pr_debug("%s full satus = 0x%x \n", __func__, battery->full_total_status);
 
 	if(battery->full_total_status == (SEC_DUAL_BATTERY_MAIN_CONDITION_DONE | SEC_DUAL_BATTERY_SUB_CONDITION_DONE))
 		return POWER_SUPPLY_STATUS_FULL;
@@ -128,7 +127,7 @@ static int sec_dual_battery_current_avg(struct sec_dual_battery_info *battery, i
 		idis = value.intval;	
 	}
 
-	pr_info("%s: ichg=%d, idis=%d\n", __func__, ichg, idis);
+	pr_debug("%s: ichg=%d, idis=%d\n", __func__, ichg, idis);
 
 	if((ichg == 0) && (idis == 0))
 		return 0;
@@ -152,7 +151,7 @@ static int sec_dual_battery_current_limit(struct sec_dual_battery_info *battery,
 	}
 	fcc = value.intval;	
 
-	pr_info("%s: fcc=%d\n", __func__, fcc);
+	pr_debug("%s: fcc=%d\n", __func__, fcc);
 
 	return fcc;
 }
@@ -174,7 +173,7 @@ static int sec_dual_battery_voltage_avg(struct sec_dual_battery_info *battery, i
 		vbat = value.intval;	
 	}
 
-	pr_info("%s: vbat=%d\n", __func__, vbat);
+	pr_debug("%s: vbat=%d\n", __func__, vbat);
 
 	return vbat;
 }
@@ -212,14 +211,14 @@ static int sec_dual_battery_get_property(struct power_supply *psy,
 			if (value.intval == SEC_DUAL_BATTERY_MAIN) {
 				if (battery->pdata->main_bat_con_det_gpio) {
 					val->intval = !gpio_get_value(battery->pdata->main_bat_con_det_gpio);
-					pr_info("%s : main det(%d) = %d \n", __func__, battery->pdata->main_bat_con_det_gpio, (int)val->intval);
+					pr_debug("%s : main det(%d) = %d \n", __func__, battery->pdata->main_bat_con_det_gpio, (int)val->intval);
 				}
 				else
 					val->intval = -1;
 			} else {
 				if (battery->pdata->sub_bat_con_det_gpio) {
 					val->intval = !gpio_get_value(battery->pdata->sub_bat_con_det_gpio);
-					pr_info("%s : sub det(%d) = %d \n", __func__, battery->pdata->sub_bat_con_det_gpio, (int)val->intval);
+					pr_debug("%s : sub det(%d) = %d \n", __func__, battery->pdata->sub_bat_con_det_gpio, (int)val->intval);
 				}
 				else
 					val->intval = -1;
@@ -294,7 +293,7 @@ static int sec_dual_battery_set_property(struct power_supply *psy,
 		case POWER_SUPPLY_EXT_PROP_FULL_CONDITION:
 			battery->pdata->main_full_condition_vcell = val->intval;
 			battery->pdata->sub_full_condition_vcell = val->intval;
-			pr_info("%s : main_full_condition_vcell(%d), sub_full_condition_vcell(%d)\n", __func__,
+			pr_debug("%s : main_full_condition_vcell(%d), sub_full_condition_vcell(%d)\n", __func__,
 				battery->pdata->main_full_condition_vcell,
 				battery->pdata->sub_full_condition_vcell);
 			break;
@@ -336,39 +335,39 @@ static int sec_dual_battery_parse_dt(struct device *dev,
 		ret = of_property_read_u32(np, "battery,main_full_condition_vcell",
 					&pdata->main_full_condition_vcell);
 		if (ret < 0) {
-			pr_info("%s : main_full_condition_vcell is empty\n", __func__);
+			pr_debug("%s : main_full_condition_vcell is empty\n", __func__);
 			pdata->main_full_condition_vcell = 4250;
 		}
 
 		ret = of_property_read_u32(np, "battery,sub_full_condition_vcell",
 					&pdata->sub_full_condition_vcell);
 		if (ret < 0) {
-			pr_info("%s : sub_full_condition_vcell is empty\n", __func__);
+			pr_debug("%s : sub_full_condition_vcell is empty\n", __func__);
 			pdata->sub_full_condition_vcell = 4250;
 		}
 
 		ret = of_property_read_u32(np, "battery,main_full_condition_eoc",
 					&pdata->main_full_condition_eoc);
 		if (ret < 0) {
-			pr_info("%s : main_full_condition_eoc is empty\n", __func__);
+			pr_debug("%s : main_full_condition_eoc is empty\n", __func__);
 			pdata->main_full_condition_eoc = 100;
 		}
 
 		ret = of_property_read_u32(np, "battery,sub_full_condition_eoc",
 					&pdata->sub_full_condition_eoc);
 		if (ret < 0) {
-			pr_info("%s : sub_full_condition_eoc is empty\n", __func__);
+			pr_debug("%s : sub_full_condition_eoc is empty\n", __func__);
 			pdata->sub_full_condition_eoc = 100;
 		}		
 		/* MAIN_BATTERY_CON_DET */
 		ret = pdata->main_bat_con_det_gpio = of_get_named_gpio(np, "battery,main_bat_con_det_gpio", 0);
 		if (ret < 0) {
-			pr_info("%s : can't get main_bat_con_det_gpio\n", __func__);
+			pr_debug("%s : can't get main_bat_con_det_gpio\n", __func__);
 		}
 		/* SUB_BATTERY_CON_DET */
 		ret = pdata->sub_bat_con_det_gpio = of_get_named_gpio(np, "battery,sub_bat_con_det_gpio", 0);
 		if (ret < 0) {
-			pr_info("%s : can't get sub_bat_con_det_gpio\n", __func__);
+			pr_debug("%s : can't get sub_bat_con_det_gpio\n", __func__);
 		}
 	}
 	return 0;
@@ -500,7 +499,7 @@ static struct platform_driver sec_dual_battery_driver = {
 
 static int __init sec_dual_battery_init(void)
 {
-	pr_info("%s: \n", __func__);
+	pr_debug("%s: \n", __func__);
 	return platform_driver_register(&sec_dual_battery_driver);
 }
 

@@ -12,8 +12,6 @@
 
 #include "include/sec_adc.h"
 
-#define DEBUG
-
 struct adc_list {
 	const char *name;
 	struct iio_channel *channel;
@@ -56,7 +54,7 @@ static void sec_bat_adc_ap_init(struct platform_device *pdev,
 	}
 
 	for (i  = 0; i < SEC_BAT_ADC_CHANNEL_NUM; i++)
-		pr_info("%s %s - %s\n",
+		pr_debug("%s %s - %s\n",
 			__func__, batt_adc_list[i].name, batt_adc_list[i].is_used ? "used" : "not used");
 }
 
@@ -384,7 +382,7 @@ int sec_bat_convert_adc_to_temp(unsigned int adc_ch, int temp_adc)
 	unsigned int temp_adc_table_size = 0;
 
 	if(!local_battery) {
-		pr_info("%s: battery data is not ready yet\n", __func__);
+		pr_debug("%s: battery data is not ready yet\n", __func__);
 		goto temp_to_adc_goto;
 	}
 
@@ -455,7 +453,7 @@ int sec_bat_get_thr_voltage(unsigned int adc_ch, int temp)
 	unsigned int temp_adc_table_size = 0;
 
 	if(!local_battery) {
-		pr_info("%s: battery data is not ready yet\n", __func__);
+		pr_debug("%s: battery data is not ready yet\n", __func__);
 		goto get_thr_voltage_goto;
 	}
 

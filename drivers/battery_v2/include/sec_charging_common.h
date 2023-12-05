@@ -42,6 +42,11 @@
 #define MFC_LDO_ON		1
 #define MFC_LDO_OFF		0
 
+#ifdef pr_debug
+#undef pr_debug
+#define pr_debug(fmt, ...)
+#endif
+
 enum power_supply_ext_property {
 	POWER_SUPPLY_EXT_PROP_CHECK_SLAVE_I2C = POWER_SUPPLY_PROP_MAX,
 	POWER_SUPPLY_EXT_PROP_MULTI_CHARGER_MODE,

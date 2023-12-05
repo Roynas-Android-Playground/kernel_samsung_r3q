@@ -19,8 +19,6 @@
 #include <linux/of_gpio.h>
 #include "include/charger/smb1351_charger.h"
 
-#define DEBUG
-
 #define ENABLE 1
 #define DISABLE 0
 
@@ -107,7 +105,7 @@ static void smb1351_charger_test_read(struct smb1351_charger_data *charger)
 		smb1351_read_reg(charger->i2c, addr, &data);
 		sprintf(str + strlen(str), "[0x%02x]0x%02x, ", addr, data);
 	}
-	pr_info("SMB1351 : %s\n", str);
+	pr_debug("SMB1351 : %s\n", str);
 }
 
 static int smb1351_get_charger_state(struct smb1351_charger_data *charger)
@@ -138,7 +136,7 @@ static int smb1351_get_charger_health(struct smb1351_charger_data *charger)
 {
 	u8 reg = 0;
 	smb1351_read_reg(charger->i2c, SMB1351_STATUS7_REG, &reg);
-	pr_info("%s: HVDCP Reg : 0x%x\n", __func__, reg);
+	pr_debug("%s: HVDCP Reg : 0x%x\n", __func__, reg);
 
 	return POWER_SUPPLY_HEALTH_GOOD;
 }
@@ -212,13 +210,13 @@ static void smb1351_set_charge_current(struct smb1351_charger_data *charger,
 	smb1351_update_reg(charger->i2c, SMB1351_CHG_CURRENT_CTRL_REG,
 			i, FAST_CHG_CURRENT_MASK);
 
-	pr_info("%s: charge_current(%d)\n", __func__, charge_current);
+	pr_debug("%s: charge_current(%d)\n", __func__, charge_current);
 }
 
 static void smb1351_set_charger_state(struct smb1351_charger_data *charger,
 	int enable)
 {
-	pr_info("%s: SMB1351 CHARGE : %s\n", enable > 0 ? "ENABLE" : "DISABLE", __func__);
+	pr_debug("%s: SMB1351 CHARGE : %s\n", enable > 0 ? "ENABLE" : "DISABLE", __func__);
 
 	if (enable)
 		smb1351_update_reg(charger->i2c, SMB1351_CMD_CHG_REG,
@@ -243,13 +241,13 @@ static void smb1351_set_topoff_current(struct smb1351_charger_data *charger,
 		pr_err("Couldn't write SMB1351_OTHER_CHARGE_CURRENTS_REG rc=%d\n", rc);
 
 	charger->topoff_current = topoff_current;
-	pr_info("%s: topoff_current(%d)\n", __func__, topoff_current);
+	pr_debug("%s: topoff_current(%d)\n", __func__, topoff_current);
 }
 
 static void smb1351_set_charger_volatile(struct smb1351_charger_data *charger,
 	int enable)
 {
-	pr_info("%s: SMB1351 CHARGE : %s\n", enable > 0 ? "ENABLE" : "DISABLE", __func__);
+	pr_debug("%s: SMB1351 CHARGE : %s\n", enable > 0 ? "ENABLE" : "DISABLE", __func__);
 
 	if (enable)
 		smb1351_update_reg(charger->i2c, SMB1351_CMD_I2C_REG,
@@ -277,7 +275,7 @@ static void smb1351_set_float_voltage(struct smb1351_charger_data *charger, int 
 		pr_err("Couldn't write FLOAT_VOLTAGE_REG rc=%d\n", rc);
 
 	charger->float_voltage = float_voltage;
-	pr_info("%s: update float voltage(%d)\n", __func__, float_voltage);
+	pr_debug("%s: update float voltage(%d)\n", __func__, float_voltage);
 }
 
 static void smb1351_check_charging_configure(struct smb1351_charger_data *charger)
@@ -304,7 +302,7 @@ static void smb1351_mode_change(struct smb1351_charger_data *charger, int mode)
 {
 	union power_supply_propval value;
 	if (mode == MODE_QC20) {
-		pr_info("%s: Mode change to QC2.0\n", __func__);
+		pr_debug("%s: Mode change to QC2.0\n", __func__);
 		/* 1. select HVDCP adapter select as 5V. */
 		smb1351_update_reg(charger->i2c, SMB1351_HVDCP_BATTMISSING_CTRL_REG,
 				0x0, HVDCP_ADAPTER_SEL_MASK);
@@ -323,7 +321,7 @@ static void smb1351_mode_change(struct smb1351_charger_data *charger, int mode)
 				POWER_SUPPLY_PROP_ONLINE, value);
 		charger->charge_mode = mode;
 	} else if (mode == MODE_5V) {
-		pr_info("%s: Mode change to 5V Normal\n", __func__);
+		pr_debug("%s: Mode change to 5V Normal\n", __func__);
 		/* 1. select HVDCP adapter select as 5V. */
 		smb1351_update_reg(charger->i2c, SMB1351_HVDCP_BATTMISSING_CTRL_REG,
 				0x0, HVDCP_ADAPTER_SEL_MASK);
@@ -342,7 +340,7 @@ void muic_afc_set_voltage(int vol)
 	union power_supply_propval value;
 
 	if (vol == SEC_INPUT_VOLTAGE_9V) {
-		pr_info("%s: Change to 9V(QC2.0)\n", __func__);
+		pr_debug("%s: Change to 9V(QC2.0)\n", __func__);
 		/* 1. select HVDCP adapter select as 5V. */
 		smb1351_update_reg(g_charger->i2c, SMB1351_HVDCP_BATTMISSING_CTRL_REG,
 				0x0, HVDCP_ADAPTER_SEL_MASK);
@@ -360,7 +358,7 @@ void muic_afc_set_voltage(int vol)
 		psy_do_property("battery", set,
 				POWER_SUPPLY_PROP_ONLINE, value);
 	} else if (vol == SEC_INPUT_VOLTAGE_5V) {
-		pr_info("%s: Change to 5V(Normal)\n", __func__);
+		pr_debug("%s: Change to 5V(Normal)\n", __func__);
 		/* 1. select HVDCP adapter select as 5V. */
 		{
 			/* u8 reg_data; */
@@ -389,7 +387,7 @@ static void smb1351_charger_initialize(struct smb1351_charger_data *charger)
 	int rc;
 	u8 data;
 
-	pr_info("%s: \n", __func__);
+	pr_debug("%s: \n", __func__);
 
 	/* For updateing configuration register */
 	smb1351_update_reg(charger->i2c, SMB1351_CMD_I2C_REG,
@@ -408,7 +406,7 @@ static void smb1351_charger_initialize(struct smb1351_charger_data *charger)
 		(AICL_EN_BIT | APSD_EN_BIT), (APSD_EN_BIT | AICL_EN_BIT));
 
 	/* Set Input Current Mode (Normal : manual, QC3.0 : auto) */
-	pr_info("%s: IS APSD : %d\n", __func__, charger->apsd_en);
+	pr_debug("%s: IS APSD : %d\n", __func__, charger->apsd_en);
 	smb1351_update_reg(charger->i2c, SMB1351_CMD_IL_REG, 0x9, 0x9);
 
 	if (charger->apsd_en == INPUT_CURRENT_MODE_AUTO) {
@@ -435,9 +433,9 @@ static void smb1351_charger_initialize(struct smb1351_charger_data *charger)
 		/* For checking USBIN UV status */
 		rc = smb1351_read_reg(charger->i2c, IRQ_E_REG, &data);
 		if (!rc) {
-			pr_info("%s: read USBIN status(0x44 = 0x%x)\n", __func__, data);
+			pr_debug("%s: read USBIN status(0x44 = 0x%x)\n", __func__, data);
 		} else {
-			pr_info("%s: failed to read USBIN status\n", __func__);
+			pr_debug("%s: failed to read USBIN status\n", __func__);
 		}
 
 		/* For return back to initial HVDCP adaptor setting */
@@ -471,30 +469,30 @@ static irqreturn_t smb1351_irq_handler(int irq, void *data)
 	if (charger->apsd_en == INPUT_CURRENT_MODE_MANUAL)
 		return IRQ_HANDLED;
 
-	pr_info("%s: SMB1351 Interrupt occured\n", __func__);
+	pr_debug("%s: SMB1351 Interrupt occured\n", __func__);
 
 	rc = smb1351_read_reg(charger->i2c, IRQ_H_REG, &irq_h);
 	if (rc) {
-		pr_info("%s: failed to read IRQ_G reg\n", __func__);
+		pr_debug("%s: failed to read IRQ_G reg\n", __func__);
 	} else if (irq_h & 0x0C) {
 		if (charger->cable_type != SEC_BATTERY_CABLE_NONE && !charger->is_init) {
 			smb1351_read_reg(charger->i2c, IRQ_H_REG, &irq_h);
 			smb1351_read_reg(charger->i2c, SMB1351_STATUS7_REG, &status7);
-			pr_info("%s: 0x47 :  0x%x, status7 : 0x%x\n",
+			pr_debug("%s: 0x47 :  0x%x, status7 : 0x%x\n",
 					__func__, irq_h, status7);
 
 			if (irq_h & 0x10) {
-				pr_info("%s: QC3.0 Detected.\n", __func__);
+				pr_debug("%s: QC3.0 Detected.\n", __func__);
 				value.intval = SEC_BATTERY_CABLE_QC30;
 				charger->charge_mode = MODE_QC30;
 				charger->is_init = true;
 			} else if (status7) {
-				pr_info("%s: QC2.0 Detected.\n", __func__);
+				pr_debug("%s: QC2.0 Detected.\n", __func__);
 				value.intval = SEC_BATTERY_CABLE_QC20;
 				charger->charge_mode = MODE_QC20;
 				charger->is_init = true;
 			} else {
-				pr_info("%s: Normal charger Detected.\n", __func__);
+				pr_debug("%s: Normal charger Detected.\n", __func__);
 				value.intval = SEC_BATTERY_CABLE_TA;
 				charger->charge_mode = MODE_5V;
 			}
@@ -608,7 +606,7 @@ static int smb1351_chg_set_property(struct power_supply *psy,
 		smb1351_set_topoff_current(charger, val->intval);
 		break;
 	case POWER_SUPPLY_PROP_CURRENT_MAX:
-		pr_info("%s: Sub Charger Input current set : %d\n",
+		pr_debug("%s: Sub Charger Input current set : %d\n",
 			__func__, val->intval);
 		smb1351_set_input_current(charger, val->intval);
 		break;
@@ -636,7 +634,7 @@ static void smb1351_charger_qc_detection_work(struct work_struct *work)
 			u8 data = 0;
 
 			smb1351_read_reg(charger->i2c, SMB1351_STATUS1_REG, &data);
-			pr_info("%s: start increment algorithm(data:0x%x, vbus:%d)\n",
+			pr_debug("%s: start increment algorithm(data:0x%x, vbus:%d)\n",
 				__func__, data, vbus_start);
 
 			do {
@@ -646,7 +644,7 @@ static void smb1351_charger_qc_detection_work(struct work_struct *work)
 				msleep(200);
 			} while (vbus_start < vbus_end);
 
-			pr_info("%s: finished increment vbus to %dmV\n",	__func__, vbus_start);
+			pr_debug("%s: finished increment vbus to %dmV\n",	__func__, vbus_start);
 		}
 		break;
 	case MODE_QC20:
@@ -677,7 +675,7 @@ static int smb1351_charger_parse_dt(struct smb1351_charger_data *charger,
 			pdata->irq_gpio = 0;
 		} else {
 			pdata->irq_gpio = ret;
-			pr_info("%s: irq_gpio = %d\n", __func__, pdata->irq_gpio);
+			pr_debug("%s: irq_gpio = %d\n", __func__, pdata->irq_gpio);
 		}
 	}
 #if 0
@@ -688,7 +686,7 @@ static int smb1351_charger_parse_dt(struct smb1351_charger_data *charger,
 		ret = of_property_read_u32(np, "battery,chg_float_voltage",
 					   &charger->float_voltage);
 		if (ret) {
-			pr_info("%s: battery,chg_float_voltage is Empty\n", __func__);
+			pr_debug("%s: battery,chg_float_voltage is Empty\n", __func__);
 			charger->float_voltage = 42000;
 		}
 	}
@@ -749,7 +747,7 @@ ssize_t smb1351_chg_store_attrs(struct device *dev,
 		case MODE:
 			if (sscanf(buf, "%d", &x) == 1) {
 				if (x >= 0 && x <= 2) {
-					pr_info("%s: SMB1351 Charge Mode Change to %s\n", __func__,
+					pr_debug("%s: SMB1351 Charge Mode Change to %s\n", __func__,
 						x == 0 ? "5V" : x == 1 ? "QC2.0" : "QC3.0");
 					smb1351_mode_change(charger, x);
 				} else {
@@ -785,7 +783,7 @@ static int smb1351_charger_probe(struct i2c_client *client,
 	struct power_supply_config charger_cfg = {};
 	int ret = 0;
 
-	pr_info("%s: SMB1351 Charger Driver Loading\n", __func__);
+	pr_debug("%s: SMB1351 Charger Driver Loading\n", __func__);
 
 	charger = kzalloc(sizeof(*charger), GFP_KERNEL);
 	if (!charger) {
@@ -866,7 +864,7 @@ static int smb1351_charger_probe(struct i2c_client *client,
 	device_init_wakeup(charger->dev, 1);
 
 
-	pr_info("%s: SMB1351 Charger Driver Loaded\n", __func__);
+	pr_debug("%s: SMB1351 Charger Driver Loaded\n", __func__);
 
 	/* For controlling suspend mode */
 	smb1351_update_reg(charger->i2c, SMB1351_VARIOUS_FUNC_REG,
@@ -981,13 +979,13 @@ static struct i2c_driver smb1351_charger_driver = {
 
 static int __init smb1351_charger_init(void)
 {
-	pr_info("%s: \n", __func__);
+	pr_debug("%s: \n", __func__);
 	return i2c_add_driver(&smb1351_charger_driver);
 }
 
 static void __exit smb1351_charger_exit(void)
 {
-	pr_info("%s: \n", __func__);
+	pr_debug("%s: \n", __func__);
 	i2c_del_driver(&smb1351_charger_driver);
 }
 

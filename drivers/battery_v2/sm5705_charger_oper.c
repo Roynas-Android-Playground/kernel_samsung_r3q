@@ -132,7 +132,7 @@ static inline void sm5705_charger_oper_change_state(unsigned char new_status)
 		return;
 	}
 	if (oper_info.suspend_mode) {
-		pr_info("sm5705-charger: %s: skip setting by suspend mode(MODE: %d)\n",
+		pr_debug("sm5705-charger: %s: skip setting by suspend mode(MODE: %d)\n",
 			__func__, oper_info.current_table.oper_mode);
 		goto skip_oper_change_state;
 	}	
@@ -148,7 +148,7 @@ static inline void sm5705_charger_oper_change_state(unsigned char new_status)
 		/* USB_OTG to CHG_ON work-around for BAT_REG stabilize */
 		if (oper_info.current_table.oper_mode == SM5705_CHARGER_OP_MODE_USB_OTG && \
 			sm5705_charger_operation_mode_table[i].oper_mode == SM5705_CHARGER_OP_MODE_CHG_ON) {
-			pr_info("sm5705-charger: %s: trans op_mode:suspend for BAT_REG stabilize (time=100ms)\n", __func__);
+			pr_debug("sm5705-charger: %s: trans op_mode:suspend for BAT_REG stabilize (time=100ms)\n", __func__);
 			sm5705_charger_oper_set_mode(oper_info.i2c, SM5705_CHARGER_OP_MODE_SUSPEND);
 			msleep(100);
 		}
@@ -159,7 +159,7 @@ static inline void sm5705_charger_oper_change_state(unsigned char new_status)
 	}
 skip_oper_change_state:
 	oper_info.current_table.status = new_status;
-	pr_info("sm5705-charger: %s: New table[%d] info (STATUS: 0x%x, MODE: %d, BST_OUT: 0x%x, OTG_CURRENT: 0x%x\n", \
+	pr_debug("sm5705-charger: %s: New table[%d] info (STATUS: 0x%x, MODE: %d, BST_OUT: 0x%x, OTG_CURRENT: 0x%x\n", \
 			__func__, i, oper_info.current_table.status, oper_info.current_table.oper_mode, oper_info.current_table.BST_OUT, oper_info.current_table.OTG_CURRENT);
 }
 
@@ -171,7 +171,7 @@ int sm5705_charger_oper_push_event(int event_type, bool enable)
 		pr_err("sm5705-charger: %s: required sm5705 charger operation table initialize\n", __func__);
 		return -ENOENT;
 	}
-	pr_info("sm5705-charger: %s: event_type=%d, enable=%d\n", __func__, event_type, enable);
+	pr_debug("sm5705-charger: %s: event_type=%d, enable=%d\n", __func__, event_type, enable);
 	if (event_type == SM5705_CHARGER_OP_EVENT_SUSPEND_MODE) {
 		oper_info.suspend_mode = enable;
 		if (oper_info.suspend_mode) {
@@ -200,7 +200,7 @@ int sm5705_charger_set_otg_boost(bool enable)
 	
 	sm5705_charger_oper_set_BSTOUT(oper_info.i2c, BST_OUT_4500mV);
 	sm5705_charger_oper_set_OTG_CURRENT(oper_info.i2c, OTG_CURRENT_500mA);
-	pr_info("sm5705-charger: %s: enable=%d, BST_OUT: 0x%x, OTG_CURRENT: 0x%x\n", \
+	pr_debug("sm5705-charger: %s: enable=%d, BST_OUT: 0x%x, OTG_CURRENT: 0x%x\n", \
 			__func__, enable, BST_OUT_4500mV, OTG_CURRENT_500mA);
 
 	return 0;
@@ -224,7 +224,7 @@ int sm5705_charger_oper_table_init(struct i2c_client *i2c)
 	sm5705_charger_oper_set_mode(oper_info.i2c, oper_info.current_table.oper_mode);
 	sm5705_charger_oper_set_BSTOUT(oper_info.i2c, oper_info.current_table.BST_OUT);
 	sm5705_charger_oper_set_OTG_CURRENT(oper_info.i2c, oper_info.current_table.OTG_CURRENT);
-	pr_info("sm5705-charger: %s: current table info (STATUS: 0x%x, MODE: %d, BST_OUT: 0x%x, OTG_CURRENT: 0x%x\n", \
+	pr_debug("sm5705-charger: %s: current table info (STATUS: 0x%x, MODE: %d, BST_OUT: 0x%x, OTG_CURRENT: 0x%x\n", \
 			__func__, oper_info.current_table.status, oper_info.current_table.oper_mode, oper_info.current_table.BST_OUT, oper_info.current_table.OTG_CURRENT);
 
 	return 0;

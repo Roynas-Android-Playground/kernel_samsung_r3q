@@ -41,7 +41,7 @@
 //#include <linux/sec_debug.h>		/* exynos */
 #include <linux/input/sec_tsp_log.h>	/* qualcomm */
 
-#define input_dbg(mode, dev, fmt, ...)						\
+#define input_dbg(mode, dev, fmt, ...)					/*	\
 ({										\
 	static char input_log_buf[INPUT_LOG_BUF_SIZE];				\
 	snprintf(input_log_buf, sizeof(input_log_buf), "%s %s", SECLOG, fmt);	\
@@ -54,8 +54,8 @@
 			snprintf(input_log_buf, sizeof(input_log_buf), "NULL");	\
 		sec_debug_tsp_log_msg(input_log_buf, fmt, ## __VA_ARGS__);	\
 	}									\
-})
-#define input_info(mode, dev, fmt, ...)						\
+})*/
+#define input_info(mode, dev, fmt, ...)					/*	\
 ({										\
 	static char input_log_buf[INPUT_LOG_BUF_SIZE];				\
 	snprintf(input_log_buf, sizeof(input_log_buf), "%s %s", SECLOG, fmt);	\
@@ -68,7 +68,7 @@
 			snprintf(input_log_buf, sizeof(input_log_buf), "NULL");	\
 		sec_debug_tsp_log_msg(input_log_buf, fmt, ## __VA_ARGS__);	\
 	}									\
-})
+})*/
 #define input_err(mode, dev, fmt, ...)						\
 ({										\
 	static char input_log_buf[INPUT_LOG_BUF_SIZE];				\
@@ -87,7 +87,7 @@
 #define MAIN_TOUCH	0
 #define SUB_TOUCH	1
 
-#define input_raw_info(mode, dev, fmt, ...)					\
+#define input_raw_info(mode, dev, fmt, ...)				/*	\
 ({										\
 	static char input_log_buf[INPUT_LOG_BUF_SIZE];				\
 	snprintf(input_log_buf, sizeof(input_log_buf), "%s %s", SECLOG, fmt);	\
@@ -109,10 +109,10 @@
 		sec_debug_tsp_log_msg(input_log_buf, fmt, ## __VA_ARGS__);	\
 		sec_debug_tsp_raw_data_msg(mode, input_log_buf, fmt, ## __VA_ARGS__);	\
 	}									\
-})
+})*/
 #define input_raw_data_clear(mode) sec_tsp_raw_data_clear(mode)
 #else
-#define input_raw_info(mode, dev, fmt, ...)					\
+#define input_raw_info(mode, dev, fmt, ...)				/*	\
 ({										\
 	static char input_log_buf[INPUT_LOG_BUF_SIZE];				\
 	snprintf(input_log_buf, sizeof(input_log_buf), "%s %s", SECLOG, fmt);	\
@@ -126,30 +126,30 @@
 		sec_debug_tsp_log_msg(input_log_buf, fmt, ## __VA_ARGS__);	\
 		sec_debug_tsp_raw_data_msg(input_log_buf, fmt, ## __VA_ARGS__);	\
 	}									\
-})
+})*/
 #define input_raw_data_clear() sec_tsp_raw_data_clear()
 #endif
 #define input_log_fix()	sec_tsp_log_fix()
 #else
-#define input_dbg(mode, dev, fmt, ...)						\
+#define input_dbg(mode, dev, fmt, ...)					/*	\
 ({										\
 	static char input_log_buf[INPUT_LOG_BUF_SIZE];				\
 	snprintf(input_log_buf, sizeof(input_log_buf), "%s %s", SECLOG, fmt);	\
 	dev_dbg(dev, input_log_buf, ## __VA_ARGS__);				\
-})
-#define input_info(mode, dev, fmt, ...)						\
+})*/
+#define input_info(mode, dev, fmt, ...)					/*	\
 ({										\
 	static char input_log_buf[INPUT_LOG_BUF_SIZE];				\
 	snprintf(input_log_buf, sizeof(input_log_buf), "%s %s", SECLOG, fmt);	\
 	dev_info(dev, input_log_buf, ## __VA_ARGS__);				\
-})
-#define input_err(mode, dev, fmt, ...)						\
+})*/
+#define input_err(mode, dev, fmt, ...)					/*	\
 ({										\
 	static char input_log_buf[INPUT_LOG_BUF_SIZE];				\
 	snprintf(input_log_buf, sizeof(input_log_buf), "%s %s", SECLOG, fmt);	\
 	dev_err(dev, input_log_buf, ## __VA_ARGS__);				\
-})
-#define input_raw_info(mode, dev, fmt, ...) input_info(mode, dev, fmt, ## __VA_ARGS__)
+})*/
+#define input_raw_info(mode, dev, fmt, ...) //input_info(mode, dev, fmt, ## __VA_ARGS__)
 #define input_log_fix()	{}
 #define input_raw_data_clear() {}
 #endif

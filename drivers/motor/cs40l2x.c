@@ -244,7 +244,7 @@ static int regulator_vldo_control(struct cs40l2x_private *cs40l2x, int on) {
 		return -EINVAL;
 	} else {
 		voltage = regulator_get_voltage(vldo);
-		pr_info("%s: set cmd:%s voltage:%d\n", __func__, on ? "on" : "off", voltage);
+		pr_debug("%s: set cmd:%s voltage:%d\n", __func__, on ? "on" : "off", voltage);
 	}
 
 	return 0;
@@ -259,7 +259,7 @@ static int cs40l2x_reset_control(struct cs40l2x_private *cs40l2x, int on) {
 	}
 
 	if(cs40l2x->reset_gpio != NULL) {
-		pr_info("%s: reset gpio control cmd:%s\n", __func__, on ? "on" : "off");
+		pr_debug("%s: reset gpio control cmd:%s\n", __func__, on ? "on" : "off");
 		gpiod_set_value_cansleep(cs40l2x->reset_gpio, on);
 	}
 	else if(cs40l2x->reset_vldo != NULL) {
@@ -289,7 +289,7 @@ static int get_event_index_by_command(char *cur_cmd) {
 	int event_idx = 0;
 	int cmd_idx = 0;
 
-	pr_info("%s: current state=%s\n", __func__, cur_cmd);
+	pr_debug("%s: current state=%s\n", __func__, cur_cmd);
 
 	for(cmd_idx = 0; cmd_idx < EVENT_CMD_MAX; cmd_idx++) {
 		if(!strcmp(cur_cmd, sec_vib_event_cmd[cmd_idx])) {
@@ -317,7 +317,7 @@ static int get_event_index_by_command(char *cur_cmd) {
 			break;
 	}
 
-	pr_info("%s: cmd=%d event=%d\n", __func__, cmd_idx, event_idx);
+	pr_debug("%s: cmd=%d event=%d\n", __func__, cmd_idx, event_idx);
 
 	return event_idx;
 }
@@ -365,13 +365,13 @@ static int set_current_dig_scale(struct cs40l2x_private *cs40l2x) {
 	cs40l2x_dig_scale_get(cs40l2x, &scale);
 
 	if (FOLDER_TYPE == 1) {
-		pr_info("%s: scale:%d (FOLD:%s, DURA:%s, ACCESS:%s)\n", __func__, scale,
+		pr_debug("%s: scale:%d (FOLD:%s, DURA:%s, ACCESS:%s)\n", __func__, scale,
 				status->EVENTS.FOLDER_STATE ? "CLOSE" : "OPEN",
 				status->EVENTS.SHORT_DURATION ? "SHORT" : "LONG",
 				status->EVENTS.ACCESSIBILITY_BOOST ? "ON" : "OFF");
 	}
 	else {
-		pr_info("%s: scale:%d (ACCESS:%s)\n", __func__, scale,
+		pr_debug("%s: scale:%d (ACCESS:%s)\n", __func__, scale,
 				status->EVENTS.ACCESSIBILITY_BOOST ? "ON" : "OFF");
 	}
 
@@ -527,7 +527,7 @@ static ssize_t cs40l2x_cp_trigger_index_store(struct device *dev,
 		return -EINVAL;
 
 #ifdef CONFIG_CS40L2X_SAMSUNG_FEATURE
-	pr_info("%s index:%u (num_waves:%u)\n", __func__, index, cs40l2x->num_waves);
+	pr_debug("%s index:%u (num_waves:%u)\n", __func__, index, cs40l2x->num_waves);
 #endif
 
 	mutex_lock(&cs40l2x->lock);
@@ -659,7 +659,7 @@ static ssize_t cs40l2x_cp_trigger_queue_store(struct device *dev,
 	strlcpy(pbq_str, buf, count);
 
 #if DEBUG_VIB
-	pr_info("%s pbq_str=%s\n", __func__, pbq_str);
+	pr_debug("%s pbq_str=%s\n", __func__, pbq_str);
 #endif
 
 	pbq_str_tok = strsep(&pbq_str, ",");
@@ -804,10 +804,10 @@ static ssize_t cs40l2x_cp_trigger_queue_store(struct device *dev,
 #ifdef CONFIG_CS40L2X_SAMSUNG_FEATURE
 	if(count > DEBUG_PRINT_PLAYBACK_QUEUE) {
 		strlcpy(pbq_str_alloc, buf, DEBUG_PRINT_PLAYBACK_QUEUE);
-		pr_info("%s pbq_str=%s... (depth:%d)\n", __func__, pbq_str_alloc, pbq_depth);
+		pr_debug("%s pbq_str=%s... (depth:%d)\n", __func__, pbq_str_alloc, pbq_depth);
 	} else {
 		strlcpy(pbq_str_alloc, buf, count);
-		pr_info("%s pbq_str=%s (depth:%d)\n", __func__, pbq_str_alloc, pbq_depth);
+		pr_debug("%s pbq_str=%s (depth:%d)\n", __func__, pbq_str_alloc, pbq_depth);
 	}
 #endif
 	cs40l2x->pbq_depth = pbq_depth;
@@ -1471,7 +1471,7 @@ static ssize_t cs40l2x_gpio1_rise_index_store(struct device *dev,
 		return -EINVAL;
 
 #if DEBUG_VIB
-	pr_info("%s index:%u (num_waves:%u)\n", __func__, index, cs40l2x->num_waves);
+	pr_debug("%s index:%u (num_waves:%u)\n", __func__, index, cs40l2x->num_waves);
 #endif
 
 	mutex_lock(&cs40l2x->lock);
@@ -1524,7 +1524,7 @@ static ssize_t cs40l2x_gpio1_fall_index_store(struct device *dev,
 		return -EINVAL;
 
 #if DEBUG_VIB
-	pr_info("%s index:%u (num_waves:%u)\n", __func__, index, cs40l2x->num_waves);
+	pr_debug("%s index:%u (num_waves:%u)\n", __func__, index, cs40l2x->num_waves);
 #endif
 
 	mutex_lock(&cs40l2x->lock);
@@ -2042,7 +2042,7 @@ static ssize_t cs40l2x_f0_stored_store(struct device *dev,
 		return -EINVAL;
 
 #if DEBUG_VIB
-	pr_info("%s val:%u\n", __func__, val);
+	pr_debug("%s val:%u\n", __func__, val);
 #endif
 
 	mutex_lock(&cs40l2x->lock);
@@ -2213,7 +2213,7 @@ static ssize_t cs40l2x_redc_stored_store(struct device *dev,
 		return -EINVAL;
 
 #if DEBUG_VIB
-	pr_info("%s val:%u\n", __func__, val);
+	pr_debug("%s val:%u\n", __func__, val);
 #endif
 
 	mutex_lock(&cs40l2x->lock);
@@ -2379,7 +2379,7 @@ static ssize_t cs40l2x_comp_enable_store(struct device *dev,
 		return -EINVAL;
 
 #if DEBUG_VIB
-	pr_info("%s val:%u\n", __func__, val);
+	pr_debug("%s val:%u\n", __func__, val);
 #endif
 
 	mutex_lock(&cs40l2x->lock);
@@ -2625,7 +2625,7 @@ static int cs40l2x_gpio1_dig_scale_set(struct cs40l2x_private *cs40l2x,
 	if (dig_scale == CS40L2X_DIG_SCALE_RESET)
 		return -EINVAL;
 #if DEBUG_VIB
-		pr_info("%s %u\n", __func__, dig_scale);
+		pr_debug("%s %u\n", __func__, dig_scale);
 #endif
 	ret = regmap_read(cs40l2x->regmap, reg, &val);
 	if (ret)
@@ -3196,7 +3196,7 @@ static int cs40l2x_cp_dig_scale_set(struct cs40l2x_private *cs40l2x,
 		return -EINVAL;
 
 #if DEBUG_VIB
-	pr_info("%s %u\n", __func__, dig_scale);
+	pr_debug("%s %u\n", __func__, dig_scale);
 #endif
 
 	ret = regmap_read(cs40l2x->regmap, reg, &val);
@@ -3252,7 +3252,7 @@ static ssize_t cs40l2x_cp_dig_scale_store(struct device *dev,
 		return -EINVAL;
 
 #if DEBUG_VIB
-	pr_info("%s %u\n", __func__, dig_scale);
+	pr_debug("%s %u\n", __func__, dig_scale);
 #endif
 
 	mutex_lock(&cs40l2x->lock);
@@ -3333,7 +3333,7 @@ static ssize_t cs40l2x_intensity_store(struct device *dev,
 		return -EINVAL;
 
  	dig_scale = cs40l2x_pbq_dig_scale[intensity/100];
-	pr_info("%s: %u (cp dig scale: %u)\n", __func__, intensity, dig_scale);
+	pr_debug("%s: %u (cp dig scale: %u)\n", __func__, intensity, dig_scale);
 
 	mutex_lock(&cs40l2x->lock);
 	ret = cs40l2x_cp_dig_scale_set(cs40l2x, dig_scale);
@@ -3361,7 +3361,7 @@ static ssize_t cs40l2x_haptic_engine_store(struct device *dev,
 	int _data = 0;
 
 	if (sscanf(buf, "%6d", &_data) == 1)
-		pr_info("%s, packet size : [%d] \n", __func__, _data);
+		pr_debug("%s, packet size : [%d] \n", __func__, _data);
 	else
 		pr_err("fail to get haptic_engine\n");
 
@@ -3372,14 +3372,14 @@ static ssize_t cs40l2x_haptic_engine_store(struct device *dev,
 static ssize_t cs40l2x_motor_type_show(struct device *dev, 
 		struct device_attribute *attr, char *buf)
 {
-	pr_info("%s: %s\n", __func__, sec_motor_type);
+	pr_debug("%s: %s\n", __func__, sec_motor_type);
 	return snprintf(buf, MAX_STR_LEN_VIB_TYPE, "%s\n", sec_motor_type);
 }
 
 static ssize_t cs40l2x_event_cmd_show(struct device *dev, 
 		struct device_attribute *attr, char *buf)
 {
-	pr_info("%s: [%d] %s\n", __func__, sec_prev_event_cmd);
+	pr_debug("%s: [%d] %s\n", __func__, sec_prev_event_cmd);
 	return snprintf(buf, MAX_STR_LEN_EVENT_CMD, "%s\n", sec_prev_event_cmd);
 }
 
@@ -3406,7 +3406,7 @@ static ssize_t cs40l2x_event_cmd_store(struct device *dev,
 
 	idx = get_event_index_by_command(cmd);
 	set_event_for_dig_scale(cs40l2x, idx);
-	pr_info("%s: event_idx:%d\n", __func__, idx);
+	pr_debug("%s: event_idx:%d\n", __func__, idx);
 
 	ret = sscanf(cmd, "%s", sec_prev_event_cmd);
 	if (ret != 1)
@@ -4020,7 +4020,7 @@ static ssize_t cs40l2x_hw_reset_show(struct device *dev,
 #else
 	ret = regulator_vldo_get_value(cs40l2x);
 #endif
-	pr_info("%s: status:%d\n", __func__, ret);
+	pr_debug("%s: status:%d\n", __func__, ret);
 #endif
 	return snprintf(buf, PAGE_SIZE, "%d\n",
 			gpiod_get_value_cansleep(cs40l2x->reset_gpio));
@@ -4036,7 +4036,7 @@ static ssize_t cs40l2x_hw_reset_store(struct device *dev,
 	unsigned int val, fw_id_restore;
 
 #ifdef CONFIG_CS40L2X_SAMSUNG_FEATURE
-	pr_info("%s: enter revid:%d %d count:%d\n", __func__,
+	pr_debug("%s: enter revid:%d %d count:%d\n", __func__,
 			CS40L2X_REVID_B1, cs40l2x->revid, count);
 #endif
 
@@ -4045,7 +4045,7 @@ static ssize_t cs40l2x_hw_reset_store(struct device *dev,
 		return -EINVAL;
 
 #ifdef CONFIG_CS40L2X_SAMSUNG_FEATURE
-	pr_info("%s: start val:%d\n", __func__, val);
+	pr_debug("%s: start val:%d\n", __func__, val);
 #endif
 	if (cs40l2x->revid < CS40L2X_REVID_B1)
 		return -EPERM;
@@ -4105,7 +4105,7 @@ static ssize_t cs40l2x_hw_reset_store(struct device *dev,
 
 	ret = count;
 #ifdef CONFIG_CS40L2X_SAMSUNG_FEATURE
-	pr_info("%s: done val:%d ret:%d\n", __func__, val, ret);
+	pr_debug("%s: done val:%d ret:%d\n", __func__, val, ret);
 #endif
 
 err_mutex:
@@ -5457,7 +5457,7 @@ static void cs40l2x_vibe_start_worker(struct work_struct *work)
 		break;
 #ifdef CONFIG_CS40L2X_SAMSUNG_FEATURE
 	default :
-		pr_info("%s: Playing index %u (intensity: %u)\n",
+		pr_debug("%s: Playing index %u (intensity: %u)\n",
 			__func__, cs40l2x->cp_trailer_index, cs40l2x->intensity);
 #endif
 	}
@@ -5782,16 +5782,16 @@ static void cs40l2x_vibe_enable(struct timed_output_dev *sdev, int timeout)
 		container_of(sdev, struct cs40l2x_private, timed_dev);
 
 #ifdef CONFIG_CS40L2X_SAMSUNG_FEATURE
-	pr_info("%s: %dms\n", __func__, timeout);
+	pr_debug("%s: %dms\n", __func__, timeout);
 
 	if (vib_disable) {
-		pr_info("%s: disable vibrate mode\n", __func__);
+		pr_debug("%s: disable vibrate mode\n", __func__);
 		return;
 	}
 #if 0
 	/* temp disable cp trigier index (31 ~ 50) */
 	if (cs40l2x->cp_trigger_index >= 31 && cs40l2x->cp_trigger_index <= 50 && timeout > 0) {
-		pr_info("%s: disable trigger index: %d \n", __func__, cs40l2x->cp_trigger_index);
+		pr_debug("%s: disable trigger index: %d \n", __func__, cs40l2x->cp_trigger_index);
 		return;
 	}
 #endif
@@ -5806,7 +5806,7 @@ static void cs40l2x_vibe_enable(struct timed_output_dev *sdev, int timeout)
 			queue_work(cs40l2x->vibe_workqueue, &cs40l2x->vibe_stop_work);
 		}
 	} else {
-		pr_info("%s vibe init state? %d\n", __func__, cs40l2x->vibe_init_success);
+		pr_debug("%s vibe init state? %d\n", __func__, cs40l2x->vibe_init_success);
 	}
 #else
 	if (timeout > 0) {
@@ -8592,7 +8592,7 @@ static int cs40l2x_handle_of_data(struct i2c_client *i2c_client,
 	pdata->hiber_enable = of_property_read_bool(np, "cirrus,hiber-enable");
 #if defined(CONFIG_CS40L2X_SAMSUNG_FEATURE)
 	vib_disable = of_property_read_bool(np, "samsung,vib_disable");
-	pr_info("%s: samsung,vib_disable: %d\n", __func__, vib_disable);
+	pr_debug("%s: samsung,vib_disable: %d\n", __func__, vib_disable);
 #endif
 	ret = of_property_read_u32(np, "cirrus,asp-bclk-freq-hz", &out_val);
 	if (!ret)
@@ -8651,7 +8651,7 @@ static int cs40l2x_handle_of_data(struct i2c_client *i2c_client,
 #ifdef CONFIG_CS40L2X_SAMSUNG_FEATURE
 	ret = of_property_read_string(np, "samsung,vib_type", &type);
 	if (ret)
-		pr_info("%s: motor type not specified\n", __func__);
+		pr_debug("%s: motor type not specified\n", __func__);
 	else
 		snprintf(sec_motor_type, sizeof(sec_motor_type), "%s", type);
 #endif
@@ -9011,7 +9011,7 @@ static irqreturn_t cs40l2x_irq(int irq, void *data)
 			queue_work(cs40l2x->vibe_workqueue,
 					&cs40l2x->vibe_pbq_work);
 #ifdef CONFIG_CS40L2X_SAMSUNG_FEATURE
-			pr_info("%s: TRIG_STOP\n", __func__);
+			pr_debug("%s: TRIG_STOP\n", __func__);
 #endif
 			/* intentionally fall through */
 		case CS40L2X_EVENT_CTRL_GPIO_STOP:
@@ -9081,7 +9081,7 @@ static int cs40l2x_i2c_probe(struct i2c_client *i2c_client,
 	struct cs40l2x_platform_data *pdata = dev_get_platdata(dev);
 
 #ifdef CONFIG_CS40L2X_SAMSUNG_FEATURE
-	pr_info("%s\n", __func__ );
+	pr_debug("%s\n", __func__ );
 #endif
 	cs40l2x = devm_kzalloc(dev, sizeof(struct cs40l2x_private), GFP_KERNEL);
 	if (!cs40l2x)
@@ -9303,12 +9303,12 @@ static int cs40l2x_i2c_probe(struct i2c_client *i2c_client,
 
 #ifdef CONFIG_CS40L2X_SAMSUNG_FEATURE
 err2:
-	pr_info("%s err2\n", __func__ );
+	pr_debug("%s err2\n", __func__ );
 	cs40l2x_dev_node_remove(cs40l2x);
 #endif
 #ifdef CONFIG_CS40L2X_SAMSUNG_FEATURE
 err1:
-	pr_info("%s err1\n", __func__ );
+	pr_debug("%s err1\n", __func__ );
 #else
 err:
 #endif

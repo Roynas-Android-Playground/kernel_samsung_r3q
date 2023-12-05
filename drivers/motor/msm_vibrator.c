@@ -132,26 +132,26 @@ static void set_vibrator(struct msm_vib *vib, int enable)
 		vibe_set_intensity(enable);
 		gpio_set_value(vib->motor_pwm, enable);
 	}
-	pr_info("[VIB] set_vibrator start \n");
+	pr_debug("[VIB] set_vibrator start \n");
 	if (!vib->vdd_type) {
 		if (enable) {
 			vib_pinctrl = devm_pinctrl_get_select(vib->dev, "tlmm_motor_active");
 			if (IS_ERR(vib_pinctrl)) {
-				pr_info("Target does not use pinctrl\n");
+				pr_debug("Target does not use pinctrl\n");
 				gpio_set_value(vib->motor_en, 1);
 				vib_pinctrl = NULL;
 			}
 		val = gpio_get_value(vib->motor_en);	
-		pr_info("%s: [VIB] ON motor en: %d value %d\n", __func__,vib->motor_en, val);
+		pr_debug("%s: [VIB] ON motor en: %d value %d\n", __func__,vib->motor_en, val);
 		} else {
 			vib_pinctrl = devm_pinctrl_get_select(vib->dev, "tlmm_motor_suspend");
 			if (IS_ERR(vib_pinctrl)) {
-				pr_info("Target does not use pinctrl\n");
+				pr_debug("Target does not use pinctrl\n");
 				gpio_set_value(vib->motor_en, enable);
 				vib_pinctrl = NULL;
 			}
 		val = gpio_get_value(vib->motor_en);	
-		pr_info("%s: [VIB] OFF motor en: %d value %d\n", __func__,vib->motor_en, val);
+		pr_debug("%s: [VIB] OFF motor en: %d value %d\n", __func__,vib->motor_en, val);
 		}
 	}
 	else {
@@ -159,17 +159,17 @@ static void set_vibrator(struct msm_vib *vib, int enable)
 			if (!regulator_is_enabled(vib->vdd)) {
 #ifdef CONFIG_DC_MOTOR_PMIC
 				ret = regulator_set_voltage(vib->vdd, vib_volt, vib_volt);
-				pr_info("[VIB] voltage: %dmV\n", vib_volt/DIVIDE_VOLT);
+				pr_debug("[VIB] voltage: %dmV\n", vib_volt/DIVIDE_VOLT);
 #endif
 				ret = regulator_enable(vib->vdd);
 				if (ret) {
 					pr_err("[VIB] power on error!\n");
 					return;
 				} else {
-					pr_info("[VIB] success to enable regulator \n");				
+					pr_debug("[VIB] success to enable regulator \n");				
 				}
 			} else
-				pr_info("[VIB] already power on\n");
+				pr_debug("[VIB] already power on\n");
 		} else {
 			if (regulator_is_enabled(vib->vdd)) {
 				ret = regulator_disable(vib->vdd);
@@ -177,10 +177,10 @@ static void set_vibrator(struct msm_vib *vib, int enable)
 					pr_err("[VIB] power off error\n");
 					return;
 				} else {
-					pr_info("[VIB] success to disable regulator \n");					
+					pr_debug("[VIB] success to disable regulator \n");					
 				}
 			} else
-				pr_info("[VIB] already power off\n");
+				pr_debug("[VIB] already power off\n");
 		}
 	}
 
@@ -189,7 +189,7 @@ static void set_vibrator(struct msm_vib *vib, int enable)
 	else
 		wake_unlock(&vib->wklock);
 
-	pr_info("[VIB] is %s\n",
+	pr_debug("[VIB] is %s\n",
 			enable ? "enabled": "disabled");
 
 }
@@ -200,11 +200,11 @@ static void vibrator_enable(struct msm_vib *vib, int value)
 	hrtimer_cancel(&vib->vib_timer);
 
 	if (!value)
-		pr_info("[VIB] OFF\n");
+		pr_debug("[VIB] OFF\n");
 	else {
-		pr_info("[VIB] ON, Duration : %d msec\n" , value);
+		pr_debug("[VIB] ON, Duration : %d msec\n" , value);
 		if (value == 0x7fffffff)
-			pr_info("[VIB] No Use Timer %d \n", value);
+			pr_debug("[VIB] No Use Timer %d \n", value);
 		else {
 			value = (value > vib->timeout ?	vib->timeout : value);
 			hrtimer_start(&vib->vib_timer,ktime_set(value / 1000, (value % 1000) * 1000000),HRTIMER_MODE_REL);
@@ -255,7 +255,7 @@ static ssize_t motor_type_show(struct device *dev, struct device_attribute *attr
 {
 	struct msm_vib *vib = dev_get_drvdata(dev);
 
-	pr_info("%s: %s\n", __func__, vib->vib_type);
+	pr_debug("%s: %s\n", __func__, vib->vib_type);
 	return snprintf(buf, MAX_LEN_VIB_TYPE, "%s\n", vib->vib_type);
 }
 
@@ -295,7 +295,7 @@ static int msm_vibrator_suspend(struct device *dev)
 {
 	struct msm_vib *vib = dev_get_drvdata(dev);
 
-	pr_info("[VIB] %s\n",__func__);
+	pr_debug("[VIB] %s\n",__func__);
 
 	hrtimer_cancel(&vib->vib_timer);
 	cancel_work_sync(&vib->work);
@@ -357,7 +357,7 @@ static int msm_vibrator_probe(struct platform_device *pdev)
 #endif
 	int rc;
 
-	pr_info("[VIB] %s\n", __func__);
+	pr_debug("[VIB] %s\n", __func__);
 
 	vib = devm_kzalloc(&pdev->dev, sizeof(*vib), GFP_KERNEL);
 	if (!vib)	{
@@ -378,10 +378,10 @@ static int msm_vibrator_probe(struct platform_device *pdev)
 			return -EINVAL;
 		} else {
 			rc = regulator_set_voltage(vib->vdd, 3300000, 3300000);
-			pr_info("[VIB] voltage: 3.3V\n");
+			pr_debug("[VIB] voltage: 3.3V\n");
 
 			rc = regulator_set_load(vib->vdd, 100000);
-			pr_info("[VIB] set load to 100mA\n");
+			pr_debug("[VIB] set load to 100mA\n");
 		}
 	}
 
@@ -394,7 +394,7 @@ static int msm_vibrator_probe(struct platform_device *pdev)
 	}
 
 	if (!vib->vdd_type) {
-		pr_info("[VIB] motor_en: %d motor_pwm: %d\n",
+		pr_debug("[VIB] motor_en: %d motor_pwm: %d\n",
 					vib->motor_en, vib->motor_pwm);
 		if (!gpio_is_valid(vib->motor_en)) {
 			pr_err("%s:%d, reset gpio not specified\n",
@@ -420,7 +420,7 @@ static int msm_vibrator_probe(struct platform_device *pdev)
 
 	rc = of_property_read_string(pdev->dev.of_node, "samsung,vib_type", &type);
 	if (rc) {
-		pr_info("%s: motor type not specified\n", __func__);
+		pr_debug("%s: motor type not specified\n", __func__);
 		snprintf(vib->vib_type, sizeof(vib->vib_type), "%s", "NONE");
 		rc = 0;
 	} else {

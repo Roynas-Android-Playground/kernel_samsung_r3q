@@ -88,7 +88,7 @@ static void s2mu106_set_boost_voltage(struct s2mu106_haptic_data *haptic, int vo
 		data = (voltage - 3150) / 50;
 	else
 		data = 0xFF;
-	pr_info("%s: boost voltage %d, 0x%02x\n", __func__, voltage, data);
+	pr_debug("%s: boost voltage %d, 0x%02x\n", __func__, voltage, data);
 
 	s2mu106_update_reg(haptic->i2c, S2MU106_REG_HBST_CTRL1,
 				data, HAPTIC_BOOST_VOLTAGE_MASK);
@@ -119,7 +119,7 @@ static int s2mu106_get_temperature_duty_ratio(struct s2mu106_haptic_data *haptic
 	psy_do_property("battery", get, POWER_SUPPLY_PROP_TEMP, value);
 	if (value.intval >= haptic->pdata->temperature)
 		ret = haptic->pdata->high_temp_ratio;
-	pr_info("%s temp:%d duty:%d\n", __func__, value.intval, ret);
+	pr_debug("%s temp:%d duty:%d\n", __func__, value.intval, ret);
 	return ret;
 }
 #endif
@@ -167,7 +167,7 @@ static void s2mu106_haptic_set_intensity(struct s2mu106_haptic_data *haptic, int
 static void s2mu106_haptic_onoff(struct s2mu106_haptic_data *haptic, bool en)
 {
 	if (en) {
-		pr_info("Motor Enable\n");
+		pr_debug("Motor Enable\n");
 
 		wake_lock(&vib_wake_lock);
 		pm_qos_update_request(&pm_qos_req, PM_QOS_NONIDLE_VALUE);
@@ -196,7 +196,7 @@ static void s2mu106_haptic_onoff(struct s2mu106_haptic_data *haptic, bool en)
 			break;
 		}
 	} else {
-		pr_info("Motor Disable\n");
+		pr_debug("Motor Disable\n");
 
 		switch (haptic->hap_mode) {
 		case S2MU106_HAPTIC_LRA:
@@ -248,14 +248,14 @@ static void s2mu106_haptic_engine_run_packet(struct s2mu106_haptic_data *hap_dat
 	s2mu106_haptic_set_intensity(hap_data, intensity);
 
 	if (intensity) {
-		pr_info("[haptic engine] motor run\n");
+		pr_debug("[haptic engine] motor run\n");
 		s2mu106_haptic_onoff(hap_data, true);
 	} else {
-		pr_info("[haptic engine] motor stop\n");
+		pr_debug("[haptic engine] motor stop\n");
 		s2mu106_haptic_onoff(hap_data, false);
 	}
 
-	pr_info("%s [%d] time:%d, intensity:%d, freq:%d od: %d ratio: %d\n", __func__,
+	pr_debug("%s [%d] time:%d, intensity:%d, freq:%d od: %d ratio: %d\n", __func__,
 		pdata->packet_cnt, pdata->timeout, intensity, pdata->freq, overdrive, pdata->ratio);
 }
 
@@ -299,9 +299,9 @@ static void haptic_enable(struct timed_output_dev *tout_dev, int value)
 			setSensorCallback(true, value);
 #endif
 			if (pdata->multi_frequency)
-				pr_info("%s freq: %d intensity: %u duty: %d %u ms\n", __func__, pdata->freq, hap_data->intensity, pdata->ratio, pdata->timeout);
+				pr_debug("%s freq: %d intensity: %u duty: %d %u ms\n", __func__, pdata->freq, hap_data->intensity, pdata->ratio, pdata->timeout);
 			else
-				pr_info("%s intensity: %u duty: %d %u ms\n", __func__, hap_data->intensity, pdata->ratio, pdata->timeout);
+				pr_debug("%s intensity: %u duty: %d %u ms\n", __func__, hap_data->intensity, pdata->ratio, pdata->timeout);
 		}
 
 		mutex_unlock(&hap_data->mutex);
@@ -329,7 +329,7 @@ static enum hrtimer_restart haptic_timer_func(struct hrtimer *timer)
 	struct s2mu106_haptic_data *hap_data
 		= container_of(timer, struct s2mu106_haptic_data, timer);
 
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 
 	kthread_queue_work(&hap_data->kworker, &hap_data->kwork);
 	return HRTIMER_NORESTART;
@@ -391,7 +391,7 @@ static void set_ratio_for_event(struct s2mu106_haptic_platform_data *pdata, int 
 		break;
 	}
 
-	pr_info("%s: event: %d, ratio set to %d\n", __func__, pdata->event_idx, pdata->ratio);
+	pr_debug("%s: event: %d, ratio set to %d\n", __func__, pdata->event_idx, pdata->ratio);
 }
 
 static int get_event_index_by_command(char *cur_cmd)
@@ -399,7 +399,7 @@ static int get_event_index_by_command(char *cur_cmd)
 	int event_idx = 0;
 	int cmd_idx = 0;
 
-	pr_info("%s: current state=%s\n", __func__, cur_cmd);
+	pr_debug("%s: current state=%s\n", __func__, cur_cmd);
 
 	for(cmd_idx = 0; cmd_idx < EVENT_CMD_MAX; cmd_idx++) {
 		if(!strcmp(cur_cmd, s2mu106_sec_vib_event_cmd[cmd_idx])) {
@@ -427,7 +427,7 @@ static int get_event_index_by_command(char *cur_cmd)
 			break;
 	}
 
-	pr_info("%s: cmd=%d event=%d\n", __func__, cmd_idx, event_idx);
+	pr_debug("%s: cmd=%d event=%d\n", __func__, cmd_idx, event_idx);
 
 	return event_idx;
 }
@@ -512,7 +512,7 @@ static ssize_t haptic_engine_store(struct device *dev,
 		return count;
 
 	if (_data > PACKET_MAX_SIZE * VIB_PACKET_MAX)
-		pr_info("%s, [%d] packet size over\n", __func__, _data);
+		pr_debug("%s, [%d] packet size over\n", __func__, _data);
 	else {
 		pdata->packet_size = _data / VIB_PACKET_MAX;
 		pdata->packet_cnt = 0;
@@ -602,7 +602,7 @@ static ssize_t vib_enable_store(struct device *dev,
 		return -EINVAL;
 	}
 
-	pr_info("%s, VIB %s\n", __func__, ((enable == 1) ? "ENABLE" : "DISABLE") );
+	pr_debug("%s, VIB %s\n", __func__, ((enable == 1) ? "ENABLE" : "DISABLE") );
 
         return count;
 }
@@ -621,7 +621,7 @@ static ssize_t motor_type_show(struct device *dev,
 	struct timed_output_dev *tdev = dev_get_drvdata(dev);
 	struct s2mu106_haptic_data *haptic = container_of(tdev, struct s2mu106_haptic_data, tout_dev);
 
-	pr_info("%s: %s\n", __func__, haptic->pdata->vib_type);
+	pr_debug("%s: %s\n", __func__, haptic->pdata->vib_type);
         return sprintf(buf, "%s\n", haptic->pdata->vib_type);
 }
 
@@ -630,7 +630,7 @@ DEVICE_ATTR(motor_type, 0660, motor_type_show, NULL);
 static ssize_t event_cmd_show(struct device *dev, 
 		struct device_attribute *attr, char *buf)
 {
-	pr_info("%s: [%s]\n", __func__, s2mu106_sec_prev_event_cmd);
+	pr_debug("%s: [%s]\n", __func__, s2mu106_sec_prev_event_cmd);
 	return snprintf(buf, MAX_STR_LEN_EVENT_CMD, "%s\n", s2mu106_sec_prev_event_cmd);
 }
 
@@ -645,7 +645,7 @@ static ssize_t event_cmd_store(struct device *dev,
 	int idx = 0;
 	int ret = 0;
 
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 
 	if (size > MAX_STR_LEN_EVENT_CMD) {
 		pr_err("%s: size(%zu) is too long.\n", __func__, size);
@@ -691,7 +691,7 @@ static ssize_t pwm_duty_store(struct device *dev,
 
 	s2mu106_haptic_set_intensity(hap_data, hap_data->intensity);
 
-	pr_info("%s: pwm_duty: %d\n", __func__, pdata->ratio);
+	pr_debug("%s: pwm_duty: %d\n", __func__, pdata->ratio);
 
         return count;
 }
@@ -703,7 +703,7 @@ static ssize_t pwm_duty_show(struct device *dev,
 	struct s2mu106_haptic_data *hap_data = container_of(tdev, struct s2mu106_haptic_data, tout_dev);
 	struct s2mu106_haptic_platform_data *pdata = hap_data->pdata;
 
-	pr_info("%s: pwm_duty: %d\n", __func__, pdata->ratio);
+	pr_debug("%s: pwm_duty: %d\n", __func__, pdata->ratio);
         return sprintf(buf, "pwm_duty: %d\n", pdata->ratio);
 }
 
@@ -720,7 +720,7 @@ static int s2mu106_haptic_parse_dt(struct device *dev,
 	int ret = 0, i = 0;
 	const char *type;
 
-	pr_info("%s : start dt parsing\n", __func__);
+	pr_debug("%s : start dt parsing\n", __func__);
 
 	if (np == NULL) {
 		pr_err("%s : error to get dt node\n", __func__);
@@ -734,7 +734,7 @@ static int s2mu106_haptic_parse_dt(struct device *dev,
 	} else
 		pdata->normal_ratio = (int)temp;
 
-	pr_info("normal ratio = %d\n", pdata->normal_ratio);
+	pr_debug("normal ratio = %d\n", pdata->normal_ratio);
 
 	ret = of_property_read_u32(np, "haptic,overdrive_ratio", &temp);
 	if (ret) {
@@ -743,7 +743,7 @@ static int s2mu106_haptic_parse_dt(struct device *dev,
 	} else
 		pdata->overdrive_ratio = (int)temp;
 
-	pr_info("overdrive ratio = %d\n", pdata->overdrive_ratio);
+	pr_debug("overdrive ratio = %d\n", pdata->overdrive_ratio);
 
 	ret = of_property_read_u32(np, "haptic,folder_ratio", &temp);
 	if (ret) {
@@ -752,7 +752,7 @@ static int s2mu106_haptic_parse_dt(struct device *dev,
 	} else
 		pdata->folder_ratio = (int)temp;
 
-	pr_info("folder ratio = %d\n", pdata->folder_ratio);
+	pr_debug("folder ratio = %d\n", pdata->folder_ratio);
 
 	ret = of_property_read_u32(np, "haptic,high_temp_ratio",
 			&pdata->high_temp_ratio);
@@ -761,7 +761,7 @@ static int s2mu106_haptic_parse_dt(struct device *dev,
 		pdata->high_temp_ratio = 0;
 	}
 
-	pr_info("high temp ratio = %d\n", pdata->high_temp_ratio);
+	pr_debug("high temp ratio = %d\n", pdata->high_temp_ratio);
 
 	ret = of_property_read_u32(np, "haptic,temperature",
 			&pdata->temperature);
@@ -770,7 +770,7 @@ static int s2mu106_haptic_parse_dt(struct device *dev,
 		pdata->temperature = 0;
 	}
 
-	pr_info("temperature = %d\n", pdata->temperature);
+	pr_debug("temperature = %d\n", pdata->temperature);
 
 	/* initial pwm duty ratio to normal ratio */
 	pdata->ratio = pdata->normal_ratio;
@@ -782,7 +782,7 @@ static int s2mu106_haptic_parse_dt(struct device *dev,
 	} else
 		pdata->multi_frequency = (int)temp;
 
-		pr_info("multi frequency = %d\n", pdata->multi_frequency);
+		pr_debug("multi frequency = %d\n", pdata->multi_frequency);
 
 	if (pdata->multi_frequency) {
 		pdata->multi_freq_period
@@ -800,14 +800,14 @@ static int s2mu106_haptic_parse_dt(struct device *dev,
 		}
 
 		for (i = 0; i < pdata->multi_frequency; i++) {
-			pr_info("period[%d] = %d\n", i, pdata->multi_freq_period[i]);
+			pr_debug("period[%d] = %d\n", i, pdata->multi_freq_period[i]);
 		}
 
 		pdata->period = pdata->multi_freq_period[0];
 		pdata->duty = (pdata->period *(pdata->ratio)) / 100;
 		pdata->freq = 0;
 
-		pr_info("%s, initial ratio = %d, duty = %d, period = %d\n", __func__, pdata->ratio, pdata->duty, pdata->period);
+		pr_debug("%s, initial ratio = %d, duty = %d, period = %d\n", __func__, pdata->ratio, pdata->duty, pdata->period);
 	} else {
 		ret = of_property_read_u32(np, "haptic,period", &temp);
 		if (ret < 0)
@@ -818,16 +818,16 @@ static int s2mu106_haptic_parse_dt(struct device *dev,
 
 		pdata->duty = (pdata->period *(pdata->ratio)) / 100;
 
-		pr_info("duty = %d\n", pdata->duty);
-		pr_info("period = %d\n", pdata->period);
+		pr_debug("duty = %d\n", pdata->duty);
+		pr_debug("period = %d\n", pdata->period);
 	}
 
 	ret = of_property_read_u32(np, "haptic,intensity", &temp);
 	if (ret < 0) {
-		pr_info("%s : intensity set to 100%%\n", __func__);
+		pr_debug("%s : intensity set to 100%%\n", __func__);
 		pdata->intensity = 100;
 	} else {
-		pr_info("%s : intensity set to %d%%\n", __func__,temp);
+		pr_debug("%s : intensity set to %d%%\n", __func__,temp);
 		pdata->intensity = (u32)temp;
 	}
 
@@ -885,7 +885,7 @@ static int s2mu106_haptic_parse_dt(struct device *dev,
 		pdata->hbst.level = temp;
 
 	/* parsing info */
-	pr_info("%s :operation_mode = %d, HBST_EN %s, HBST_AUTO_MODE %s\n", __func__,
+	pr_debug("%s :operation_mode = %d, HBST_EN %s, HBST_AUTO_MODE %s\n", __func__,
 			pdata->hap_mode,
 			pdata->hbst.en ? "enabled" : "disabled",
 			pdata->hbst.automode ? "enabled" : "disabled");
@@ -906,7 +906,7 @@ static void s2mu106_haptic_initial(struct s2mu106_haptic_data *haptic)
 
 	/* Haptic Boost initial setting */
 	if (haptic->pdata->hbst.en){
-		pr_info("%s : Haptic Boost Enable - Auto mode(%s)\n", __func__,
+		pr_debug("%s : Haptic Boost Enable - Auto mode(%s)\n", __func__,
 				haptic->pdata->hbst.automode ? "enabled" : "disabled");
 		/* Boost voltage level setting
 			default : 5.5V */
@@ -926,7 +926,7 @@ static void s2mu106_haptic_initial(struct s2mu106_haptic_data *haptic)
 		s2mu106_update_reg(haptic->i2c, S2MU106_REG_HT_OTP0,
 			HBST_OK_MASK_EN, (HBST_OK_MASK_EN | HBST_OK_FORCE_EN));
 
-		pr_info("%s : HDVIN - Vsys HDVIN voltage : Min 3.5V\n", __func__);
+		pr_debug("%s : HDVIN - Vsys HDVIN voltage : Min 3.5V\n", __func__);
 #if IS_ENABLED(CONFIG_MOTOR_VOLTAGE_3P3)
 		s2mu106_update_reg(haptic->i2c, S2MU106_REG_HT_OTP2, 0x40, VCEN_SEL_MASK);
 		s2mu106_update_reg(haptic->i2c, S2MU106_REG_HT_OTP3, 0x01, VCENUP_TRIM_MASK);
@@ -962,7 +962,7 @@ static void s2mu106_haptic_initial(struct s2mu106_haptic_data *haptic)
 	case S2MU106_HAPTIC_ERM_GPIO:
 		data = ERM_HDPWM_MODE_EN;
 		if (gpio_is_valid(haptic->motor_en)) {
-			pr_info("%s : MOTOR_EN enable\n", __func__);
+			pr_debug("%s : MOTOR_EN enable\n", __func__);
 			haptic->motor_en = haptic->pdata->motor_en;
 			gpio_request_one(haptic->motor_en, GPIOF_OUT_INIT_LOW, "MOTOR_EN");
 			gpio_free(haptic->motor_en);
@@ -990,7 +990,7 @@ static void s2mu106_haptic_initial(struct s2mu106_haptic_data *haptic)
 #endif
 	}
 
-	pr_info("%s, haptic operation mode = %d\n", __func__, haptic->hap_mode);
+	pr_debug("%s, haptic operation mode = %d\n", __func__, haptic->hap_mode);
 
 	sscanf(s2mu106_sec_vib_event_cmd[0], "%s", s2mu106_sec_prev_event_cmd);
 	haptic->pdata->save_vib_event.DATA = 0;
@@ -1013,7 +1013,7 @@ static int s2mu106_haptic_probe(struct platform_device *pdev)
 	int ret = 0;
 	int error = 0;
 
-	pr_info("%s Start\n", __func__);
+	pr_debug("%s Start\n", __func__);
 	haptic = devm_kzalloc(&pdev->dev,
 			sizeof(struct s2mu106_haptic_data), GFP_KERNEL);
 
@@ -1052,7 +1052,7 @@ static int s2mu106_haptic_probe(struct platform_device *pdev)
 
 	if (haptic->pdata->hap_mode == S2MU106_HAPTIC_LRA) {
 		pwm_config(haptic->pwm, haptic->pdata->duty, haptic->pdata->period);
-		pr_info("%s : duty: %d period: %d\n", __func__, haptic->pdata->duty, haptic->pdata->period);
+		pr_debug("%s : duty: %d period: %d\n", __func__, haptic->pdata->duty, haptic->pdata->period);
 	}
 
 	/* hrtimer init */
@@ -1128,10 +1128,10 @@ static int s2mu106_haptic_suspend(struct device *dev)
 	struct platform_device *pdev = container_of(dev, struct platform_device, dev);
 	struct s2mu106_haptic_data *haptic = platform_get_drvdata(pdev);
 
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 
 	if (haptic == NULL) {
-		pr_info("%s: data is NULL, return\n", __func__);
+		pr_debug("%s: data is NULL, return\n", __func__);
 		return 0;
 	}
 
@@ -1143,7 +1143,7 @@ static int s2mu106_haptic_suspend(struct device *dev)
 
 static int s2mu106_haptic_resume(struct device *dev)
 {
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 	return 0;
 }
 
@@ -1162,7 +1162,7 @@ static struct platform_driver s2mu106_haptic_driver = {
 
 static int __init s2mu106_haptic_init(void)
 {
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 	return platform_driver_register(&s2mu106_haptic_driver);
 }
 late_initcall(s2mu106_haptic_init);

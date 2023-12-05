@@ -120,7 +120,7 @@ char boost_power_on(struct ss_vib *vib, char requester, char onoff)
 			else
 				gpio_direction_output(vib->vib_power_gpio, 0);
 		} else {
-			pr_info("%s, didn't get gpio number\n", __func__);
+			pr_debug("%s, didn't get gpio number\n", __func__);
 			return -EIO;
 		}
 	} else {
@@ -130,7 +130,7 @@ char boost_power_on(struct ss_vib *vib, char requester, char onoff)
 			gpio_direction_output(1020, 0);
 	}
 
-	pr_info("%s, request[%s][%s] motor[%d], hrm[%d]\n", __func__, requester ? "HRM":"MOTOR",
+	pr_debug("%s, request[%s][%s] motor[%d], hrm[%d]\n", __func__, requester ? "HRM":"MOTOR",
 		 onoff ? "ON":"OFF", motor_on, hrm_on);
 	return (motor_on || hrm_on);
 }
@@ -306,7 +306,7 @@ static void set_vibrator(struct ss_vib *vib)
 {
 	int ret;
 
-	pr_info("[VIB]: %s, value[%d]\n", __func__, vib->state);
+	pr_debug("[VIB]: %s, value[%d]\n", __func__, vib->state);
 	if (vib->state) {
 		wake_lock(&vib_wake_lock);
 		pm_qos_update_request(&pm_qos_req, PM_QOS_NONIDLE_VALUE);
@@ -366,7 +366,7 @@ static void set_vibrator(struct ss_vib *vib)
 		wake_unlock(&vib_wake_lock);
 		pm_qos_update_request(&pm_qos_req, PM_QOS_DEFAULT_VALUE);
 	}
-	pr_info("[VIB]: %s, vibrator control finish value[%d]\n", __func__, vib->state);
+	pr_debug("[VIB]: %s, vibrator control finish value[%d]\n", __func__, vib->state);
 }
 
 static void vibrator_enable(struct ss_vib *vib, int value)
@@ -376,7 +376,7 @@ static void vibrator_enable(struct ss_vib *vib, int value)
 	hrtimer_cancel(&vib->vib_timer);
 
 	if (value == 0) {
-		pr_info("[VIB]: OFF\n");
+		pr_debug("[VIB]: OFF\n");
 		vib->state = 0;
 		vib->timevalue = 0;
 
@@ -395,12 +395,12 @@ static void vibrator_enable(struct ss_vib *vib, int value)
 				vibe_set_intensity(vib->haptic_eng[0].intensity);
 				vib->timevalue = vib->haptic_eng[0].time;
 				vib->intensity = vib->haptic_eng[0].intensity;
-				pr_info("[VIB] packet enabled");
+				pr_debug("[VIB] packet enabled");
 			}
-			pr_info("[VIB]: ON, Duration : %d msec, intensity : %d, freq : %d strength : %d od : %d\n",
+			pr_debug("[VIB]: ON, Duration : %d msec, intensity : %d, freq : %d strength : %d od : %d\n",
 				vib->timevalue, vib->intensity, vib->freq, motor_strength, vib->f_overdrive_en);
 		} else {
-			pr_info("[VIB]: ON, Duration : %d msec, intensity : %d, strength : %d od : %d\n", 
+			pr_debug("[VIB]: ON, Duration : %d msec, intensity : %d, strength : %d od : %d\n", 
 				vib->timevalue, vib->intensity, motor_strength, vib->f_overdrive_en);
 		}
 	}
@@ -442,7 +442,7 @@ static enum hrtimer_restart vibrator_timer_func(struct hrtimer *timer)
 			vibe_set_intensity(vib->haptic_eng[vib->packet_cnt].intensity);
 			vib->timevalue = vib->haptic_eng[vib->packet_cnt].time;
 			vib->intensity = vib->haptic_eng[vib->packet_cnt].intensity;
-			pr_info("[VIB] %s time[%d] intensity[%d] freq[%d](m=%d,n=%d) od[%d]\n",	__func__,
+			pr_debug("[VIB] %s time[%d] intensity[%d] freq[%d](m=%d,n=%d) od[%d]\n",	__func__,
 				vib->timevalue, vib->intensity, vib->freq,
 				g_nlra_gp_clk_m, g_nlra_gp_clk_n, vib->f_overdrive_en);
 			hrtimer_forward_now(timer, ktime_set(vib->timevalue / 1000, (vib->timevalue % 1000) * 1000000));
@@ -462,7 +462,7 @@ static int ss_vibrator_suspend(struct device *dev)
 {
 	struct ss_vib *vib = dev_get_drvdata(dev);
 
-	pr_info("[VIB]: %s\n", __func__);
+	pr_debug("[VIB]: %s\n", __func__);
 
 	hrtimer_cancel(&vib->vib_timer);
 	cancel_work_sync(&vib->work);
@@ -477,7 +477,7 @@ static int ss_vibrator_resume(struct device *dev)
 {
 	struct ss_vib *vib = dev_get_drvdata(dev);
 
-	pr_info("[VIB]: %s\n", __func__);
+	pr_debug("[VIB]: %s\n", __func__);
 	max778xx_haptic_en(vib, true);
 
 	return 0;
@@ -499,7 +499,7 @@ static int vibrator_parse_dt(struct ss_vib *vib)
 	vib->vib_en_gpio = of_get_named_gpio(np, "samsung,vib_en", 0);
 	if (!gpio_is_valid(vib->vib_en_gpio)) {
 		vib->flag_en_gpio = 0;
-		pr_info("%s:%d, en gpio not specified\n", __func__, __LINE__);
+		pr_debug("%s:%d, en gpio not specified\n", __func__, __LINE__);
 	} else
 		vib->flag_en_gpio = 1;
 
@@ -509,17 +509,17 @@ static int vibrator_parse_dt(struct ss_vib *vib)
 
 	rc = of_property_read_u32(np, "samsung,chip_model", &vib->chip_model);
 	if (vib->chip_model == 2) {
-		pr_info("chip_model is SM5720\n");
+		pr_debug("chip_model is SM5720\n");
 		vib->chip_model = CHIP_SM5720;
 	} else if (vib->chip_model == 4) {
-		pr_info("chip_model is MAX77705\n");
+		pr_debug("chip_model is MAX77705\n");
 		vib->chip_model = CHIP_MAX77705;
 	} else
-		pr_info("There isn't any chip model\n");
+		pr_debug("There isn't any chip model\n");
 
 	rc = of_property_read_string(np, "samsung,vib_type", &type);
 	if (rc) {
-		pr_info("%s: motor type not specified\n", __func__);
+		pr_debug("%s: motor type not specified\n", __func__);
 		snprintf(vib->vib_type, sizeof(vib->vib_type), "%s", "NONE");
 		rc = 0;
 	} else {
@@ -528,28 +528,28 @@ static int vibrator_parse_dt(struct ss_vib *vib)
 
 	rc = of_property_read_u32(np, "samsung,gp_clk", &vib->gp_clk);
 	if (rc) {
-		pr_info("gp_clk not specified so using default address\n");
+		pr_debug("gp_clk not specified so using default address\n");
 		vib->gp_clk = MSM_GCC_GPx_BASE;
 		rc = 0;
 	}
 
 	rc = of_property_read_u32(np, "samsung,support_multi_freq", &f_multi_freq);
 	if (rc) {
-		pr_info("support_multi_freq not specified so don't support multi freq\n");
+		pr_debug("support_multi_freq not specified so don't support multi freq\n");
 		f_multi_freq = 0;
 		rc = 0;
 	}
 
 	rc = of_property_read_u32(np, "samsung,strength_od", &vib->strength_od);
 	if (rc) {
-		pr_info("strength not specified so use default strength\n");
+		pr_debug("strength not specified so use default strength\n");
 		vib->strength_od = 94;
 		rc = 0;
 	}
 
 	rc = of_property_read_u32(np, "samsung,strength_default", &vib->strength_default);
 	if (rc) {
-		pr_info("support_multi_freq not specified so don't support multi freq\n");
+		pr_debug("support_multi_freq not specified so don't support multi freq\n");
 		vib->strength_default = 60;
 		rc = 0;
 	}
@@ -560,7 +560,7 @@ static int vibrator_parse_dt(struct ss_vib *vib)
 
 		ret = of_property_read_u32_array(np, "samsung,freq_0", array_val, 2);
 		if (ret) {
-			pr_info("%s: Unable to read freq_0\n", __func__);
+			pr_debug("%s: Unable to read freq_0\n", __func__);
 			array_val[0] = GP_CLK_M_DEFAULT;
 			array_val[1] = GP_CLK_N_DEFAULT;
 		}
@@ -569,7 +569,7 @@ static int vibrator_parse_dt(struct ss_vib *vib)
 
 		ret = of_property_read_u32_array(np, "samsung,freq_low", array_val, 2);
 		if (ret) {
-			pr_info("%s: Unable to read freq_low\n", __func__);
+			pr_debug("%s: Unable to read freq_low\n", __func__);
 			array_val[0] = GP_CLK_M_DEFAULT;
 			array_val[1] = GP_CLK_N_DEFAULT;
 		}
@@ -578,7 +578,7 @@ static int vibrator_parse_dt(struct ss_vib *vib)
 
 		ret = of_property_read_u32_array(np, "samsung,freq_mid", array_val, 2);
 		if (ret) {
-			pr_info("%s: Unable to read freq_mid\n", __func__);
+			pr_debug("%s: Unable to read freq_mid\n", __func__);
 			array_val[0] = GP_CLK_M_DEFAULT;
 			array_val[1] = GP_CLK_N_DEFAULT;
 		}
@@ -587,7 +587,7 @@ static int vibrator_parse_dt(struct ss_vib *vib)
 
 		ret = of_property_read_u32_array(np, "samsung,freq_high", array_val, 2);
 		if (ret) {
-			pr_info("%s: Unable to read freq_high\n", __func__);
+			pr_debug("%s: Unable to read freq_high\n", __func__);
 			array_val[0] = GP_CLK_M_DEFAULT;
 			array_val[1] = GP_CLK_N_DEFAULT;
 		}
@@ -596,7 +596,7 @@ static int vibrator_parse_dt(struct ss_vib *vib)
 
 		ret = of_property_read_u32_array(np, "samsung,freq_alert", array_val, 2);
 		if (ret) {
-			pr_info("%s: Unable to read freq_alert\n", __func__);
+			pr_debug("%s: Unable to read freq_alert\n", __func__);
 			array_val[0] = GP_CLK_M_DEFAULT;
 			array_val[1] = GP_CLK_N_DEFAULT;
 		}
@@ -605,21 +605,21 @@ static int vibrator_parse_dt(struct ss_vib *vib)
 	} else {
 		rc = of_property_read_u32(np, "samsung,m_default", &vib->m_default);
 		if (rc) {
-			pr_info("m_default not specified so using default address\n");
+			pr_debug("m_default not specified so using default address\n");
 			vib->m_default = GP_CLK_M_DEFAULT;
 			rc = 0;
 		}
 
 		rc = of_property_read_u32(np, "samsung,n_default", &vib->n_default);
 		if (rc) {
-			pr_info("n_default not specified so using default address\n");
+			pr_debug("n_default not specified so using default address\n");
 			vib->n_default = GP_CLK_N_DEFAULT;
 			rc = 0;
 		}
 
 		rc = of_property_read_u32(np, "samsung,motor_strength", &motor_strength);
 		if (rc) {
-			pr_info("motor_strength not specified so using default address\n");
+			pr_debug("motor_strength not specified so using default address\n");
 			motor_strength = MOTOR_STRENGTH;
 			rc = 0;
 		}
@@ -648,7 +648,7 @@ static ssize_t store_vib_tuning(struct device *dev,
 
 	retval = sscanf(buf, "%1d %3d %2d", &temp_m, &temp_n, &temp_str);
 	if (retval != 3) {
-		pr_info("[VIB]: %s, fail to get vib_tuning value\n", __func__);
+		pr_debug("[VIB]: %s, fail to get vib_tuning value\n", __func__);
 		return count;
 	}
 
@@ -659,7 +659,7 @@ static ssize_t store_vib_tuning(struct device *dev,
 	motor_strength = temp_str;
 	motor_min_strength = g_nlra_gp_clk_n*MOTOR_MIN_STRENGTH/100;
 
-	pr_info("[VIB]: %s gp_m %d, gp_n %d, gp_d %d, pwm_mul %d, strength %d, min_str %d\n", __func__,
+	pr_debug("[VIB]: %s gp_m %d, gp_n %d, gp_d %d, pwm_mul %d, strength %d, min_str %d\n", __func__,
 			g_nlra_gp_clk_m, g_nlra_gp_clk_n, g_nlra_gp_clk_d,
 			g_nlra_gp_clk_pwm_mul, motor_strength, motor_min_strength);
 
@@ -752,7 +752,7 @@ static ssize_t multi_freq_store(struct device *dev,
 	}
 	vibe_set_freq(vib, set_freq);
 
-	pr_info("[VIB]: %s gp_m %d, gp_n %d, gp_d %d, pwm_mul %d, strength %d, min_str %d\n", __func__,
+	pr_debug("[VIB]: %s gp_m %d, gp_n %d, gp_d %d, pwm_mul %d, strength %d, min_str %d\n", __func__,
 			g_nlra_gp_clk_m, g_nlra_gp_clk_n, g_nlra_gp_clk_d,
 			g_nlra_gp_clk_pwm_mul, motor_strength, motor_min_strength);
 	return count;
@@ -890,7 +890,7 @@ static ssize_t motor_type_show(struct device *dev, struct device_attribute *attr
 {
 	struct ss_vib *vib = dev_get_drvdata(dev);
 
-	pr_info("%s: %s\n", __func__, vib->vib_type);
+	pr_debug("%s: %s\n", __func__, vib->vib_type);
 	return snprintf(buf, MAX_LEN_VIB_TYPE, "%s\n", vib->vib_type);
 }
 
@@ -906,7 +906,7 @@ static void regulator_power_onoff(int onoff)
 	if (!reg_ldo) {
 		reg_ldo = regulator_get(NULL, "pmcobalt_l25");
 		if (IS_ERR(reg_ldo)) {
-			pr_info("could not get 8998_ldo, rc = %ld\n", PTR_ERR(reg_ldo));
+			pr_debug("could not get 8998_ldo, rc = %ld\n", PTR_ERR(reg_ldo));
 			return;
 		}
 
@@ -918,34 +918,34 @@ static void regulator_power_onoff(int onoff)
 
 	if (onoff) {
 		if (regulator_is_enabled(reg_ldo)) {
-			pr_info("[VIB]: power_on already\n");
+			pr_debug("[VIB]: power_on already\n");
 		} else {
 			ret = regulator_set_load(reg_ldo, 10000);
 			if (ret < 0) {
-				pr_info("regulator_set_load pmcobalt_l25 failed, rc=%d\n", ret);
+				pr_debug("regulator_set_load pmcobalt_l25 failed, rc=%d\n", ret);
 				return;
 			}
 			ret = regulator_enable(reg_ldo);
 			if (ret) {
-				pr_info("enable ldo failed, rc=%d\n", ret);
+				pr_debug("enable ldo failed, rc=%d\n", ret);
 				return;
 			}
-			pr_info("[VIB]: power_on now\n");
+			pr_debug("[VIB]: power_on now\n");
 		}
 	} else {
 		if (regulator_is_enabled(reg_ldo)) {
 			ret = regulator_set_load(reg_ldo, 0);
 			if (ret < 0)
-				pr_info("regulator_set_load pmcobalt_l25 failed, rc=%d\n", ret);
+				pr_debug("regulator_set_load pmcobalt_l25 failed, rc=%d\n", ret);
 
 			ret = regulator_disable(reg_ldo);
 			if (ret) {
-				pr_info("disable ldo failed, rc=%d\n", ret);
+				pr_debug("disable ldo failed, rc=%d\n", ret);
 				return;
 			}
-			pr_info("[VIB]: power_off now\n");
+			pr_debug("[VIB]: power_off now\n");
 		} else {
-			pr_info("[VIB]: power_off already\n");
+			pr_debug("[VIB]: power_off already\n");
 		}
 	}
 }
@@ -960,7 +960,7 @@ extern int haptic_homekey_press(void)
 {
 	/*for drv2624 panic prevention*/
 	if (g_vib == NULL) {
-		pr_info("[VIB] %s : NULL reference, return\n", __func__);
+		pr_debug("[VIB] %s : NULL reference, return\n", __func__);
 		return -1;
 	}
 
@@ -975,7 +975,7 @@ extern int haptic_homekey_press(void)
 
 	g_vib->state = 1;
 
-	pr_info("[VIB] %s : time: %dmsec, intensity: %d, freq: %d, strength : %d\n", __func__,
+	pr_debug("[VIB] %s : time: %dmsec, intensity: %d, freq: %d, strength : %d\n", __func__,
 		g_vib->timevalue, g_vib->force_touch_intensity, g_vib->freq, motor_strength);
 	g_vib->f_overdrive_en = false;
 
@@ -991,7 +991,7 @@ extern int haptic_homekey_release(void)
 
 	/*for drv2624 panic prevention*/
 	if (g_vib == NULL) {
-		pr_info("[VIB] %s : NULL reference, return\n", __func__);
+		pr_debug("[VIB] %s : NULL reference, return\n", __func__);
 		return -1;
 	}
 
@@ -1004,7 +1004,7 @@ extern int haptic_homekey_release(void)
 
 	g_vib->state = 1;
 
-	pr_info("[VIB] %s : time: %dmsec, intensity: %d, freq: %d, strength : %d\n", __func__,
+	pr_debug("[VIB] %s : time: %dmsec, intensity: %d, freq: %d, strength : %d\n", __func__,
 		g_vib->timevalue, g_vib->force_touch_intensity, g_vib->freq, motor_strength);
 	g_vib->f_overdrive_en = false;
 
@@ -1019,7 +1019,7 @@ static int ss_vibrator_probe(struct platform_device *pdev)
 	struct ss_vib *vib;
 	int rc = 0;
 
-	pr_info("[VIB]: %s\n", __func__);
+	pr_debug("[VIB]: %s\n", __func__);
 
 	vib = devm_kzalloc(&pdev->dev, sizeof(*vib), GFP_KERNEL);
 	if (!vib)
@@ -1122,11 +1122,11 @@ static int ss_vibrator_probe(struct platform_device *pdev)
 
 	vib_dev = device_create(vib->to_class, NULL, 0, vib, "vib");
 	if (IS_ERR(vib_dev))
-		pr_info("[VIB]: Failed to create device for samsung vib\n");
+		pr_debug("[VIB]: Failed to create device for samsung vib\n");
 
 	rc = sysfs_create_file(&vib_dev->kobj, &dev_attr_vib_tuning.attr);
 	if (rc)
-		pr_info("Failed to create sysfs group for samsung specific led\n");
+		pr_debug("Failed to create sysfs group for samsung specific led\n");
 
 	wake_lock_init(&vib_wake_lock, WAKE_LOCK_SUSPEND, "vib_present");
 	pm_qos_add_request(&pm_qos_req, PM_QOS_CPU_DMA_LATENCY, PM_QOS_DEFAULT_VALUE);

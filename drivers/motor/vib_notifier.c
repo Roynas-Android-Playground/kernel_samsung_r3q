@@ -31,7 +31,7 @@ int vib_notifier_register(struct notifier_block *n)
 {
 	int ret = 0;
 
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 
 	ret = blocking_notifier_chain_register(&vib_nb_head, n);
 	if (ret < 0)
@@ -44,7 +44,7 @@ int vib_notifier_unregister(struct notifier_block *nb)
 {
 	int ret = 0;
 
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 
 	ret = blocking_notifier_chain_unregister(&vib_nb_head, nb);
 	if (ret < 0)
@@ -63,10 +63,10 @@ int vib_notifier_notify(void)
 	switch (ret) {
 	case NOTIFY_DONE:
 	case NOTIFY_OK:
-		pr_info("%s done(0x%x)\n", __func__, ret);
+		pr_debug("%s done(0x%x)\n", __func__, ret);
 		break;
 	default:
-		pr_info("%s failed(0x%x)\n", __func__, ret);
+		pr_debug("%s failed(0x%x)\n", __func__, ret);
 		break;
 	}
 
@@ -76,7 +76,7 @@ int vib_notifier_notify(void)
 static int vib_notifier_test_fn(struct notifier_block *nb,
 	unsigned long action, void *data)
 {
-	pr_info("%s 0x%x\n", __func__, action);
+	pr_debug("%s 0x%x\n", __func__, action);
 
 	return 0;
 }

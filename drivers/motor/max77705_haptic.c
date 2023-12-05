@@ -48,7 +48,7 @@ static int max77705_haptic_i2c(void *data, bool en)
 	struct max77705_haptic_drvdata *drvdata = (struct max77705_haptic_drvdata *)data;
 
 	if (max77705_g_hap_data == NULL) {
-		pr_info("[VIB]%s null reference\n", __func__);
+		pr_debug("[VIB]%s null reference\n", __func__);
 		return -1;
 	}
 
@@ -106,21 +106,21 @@ static void uvlo_haptic_init_reg(struct work_struct *work)
 
 	max77705_read_reg(drvdata->i2c,
 			MAX77705_PMIC_REG_MCONFIG, &reg_data);
-	pr_info("[VIB],before haptic reg init, data = %02x\n", reg_data);
+	pr_debug("[VIB],before haptic reg init, data = %02x\n", reg_data);
 
 	max77705_haptic_init_reg(drvdata);
 	max77705_vibtonz_en(true);
 
 	max77705_read_reg(drvdata->i2c,
 			MAX77705_PMIC_REG_MCONFIG, &reg_data);
-	pr_info("[VIB],after haptic reg init, data = %02x\n", reg_data);
+	pr_debug("[VIB],after haptic reg init, data = %02x\n", reg_data);
 }
 
 static irqreturn_t max77705_haptic_irq(int irq, void *data)
 {
 	struct max77705_haptic_drvdata *drvdata = data;
 
-	pr_info("%s: [VIB] UVLO INT occurred, init haptic reg\n", __func__);
+	pr_debug("%s: [VIB] UVLO INT occurred, init haptic reg\n", __func__);
 
 	schedule_delayed_work(&drvdata->haptic_work, msecs_to_jiffies(1000));
 
@@ -138,16 +138,16 @@ static struct max77705_haptic_pdata *of_max77705_haptic_dt(struct device *dev)
 		return NULL;
 
 	if (!of_property_read_u32(np, "haptic,mode", &pdata->mode)) {
-		pr_info("[VIB] %s: mode reference fail\n", __func__);
+		pr_debug("[VIB] %s: mode reference fail\n", __func__);
 		pdata->mode = 1;
 	}
 	if (!of_property_read_u32(np, "haptic,divisor", &pdata->divisor)) {
-		pr_info("[VIB] %s: divisor reference fail\n", __func__);
+		pr_debug("[VIB] %s: divisor reference fail\n", __func__);
 		pdata->divisor = 128;
 	}
 
-	pr_info("[VIB] %s: mode: %d\n", __func__, pdata->mode);
-	pr_info("[VIB] %s: divisor: %d\n", __func__, pdata->divisor);
+	pr_debug("[VIB] %s: mode: %d\n", __func__, pdata->mode);
+	pr_debug("[VIB] %s: divisor: %d\n", __func__, pdata->divisor);
 
 	return pdata;
 }
@@ -238,7 +238,7 @@ static void max77705_haptic_shutdown(struct platform_device *pdev)
 	struct max77705_haptic_drvdata *drvdata
 		= platform_get_drvdata(pdev);
 
-	pr_info("[VIB] %s : Disable Haptic\n", __func__);
+	pr_debug("[VIB] %s : Disable Haptic\n", __func__);
 	max77705_haptic_i2c(drvdata, false);
 }
 

@@ -26,6 +26,10 @@
 
 LIST_HEAD(tsens_device_list);
 
+#ifdef CONFIG_SEC_PM
+#undef CONFIG_SEC_PM
+#endif
+
 #if defined(CONFIG_SEC_PM)
 static struct delayed_work ts_print_work;
 struct tsens_device *ts_tmdev0 = NULL;

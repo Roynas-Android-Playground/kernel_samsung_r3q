@@ -1132,56 +1132,6 @@ static struct device_attribute *fp_attrs[] = {
 	NULL,
 };
 
-static void etspi_work_func_debug(struct work_struct *work)
-{
-	u8 ldo_value = 0;
-
-	if (g_data->ldo_pin)
-		ldo_value = gpio_get_value(g_data->ldo_pin);
-
-	pr_info("%s ldo: %d, sleep: %d, tz: %d, spi_value: 0x%x, type: %s\n",
-		__func__,
-		ldo_value, gpio_get_value(g_data->sleepPin),
-		g_data->tz_mode, g_data->spi_value,
-		sensor_status[g_data->sensortype + 2]);
-}
-
-static void etspi_enable_debug_timer(void)
-{
-	mod_timer(&g_data->dbg_timer,
-		round_jiffies_up(jiffies + FPSENSOR_DEBUG_TIMER_SEC));
-}
-
-static void etspi_disable_debug_timer(void)
-{
-	del_timer_sync(&g_data->dbg_timer);
-	cancel_work_sync(&g_data->work_debug);
-}
-
-static void etspi_timer_func(unsigned long ptr)
-{
-	queue_work(g_data->wq_dbg, &g_data->work_debug);
-	mod_timer(&g_data->dbg_timer,
-		round_jiffies_up(jiffies + FPSENSOR_DEBUG_TIMER_SEC));
-}
-
-static int etspi_set_timer(struct etspi_data *etspi)
-{
-	int status = 0;
-
-	setup_timer(&etspi->dbg_timer,
-		etspi_timer_func, (unsigned long)etspi);
-	etspi->wq_dbg =
-		create_singlethread_workqueue("etspi_debug_wq");
-	if (!etspi->wq_dbg) {
-		status = -ENOMEM;
-		pr_err("%s could not create workqueue\n", __func__);
-		return status;
-	}
-	INIT_WORK(&etspi->work_debug, etspi_work_func_debug);
-	return status;
-}
-
 /*-------------------------------------------------------------------------*/
 
 static struct class *etspi_class;
@@ -1302,11 +1252,6 @@ static int etspi_probe(struct spi_device *spi)
 		goto etspi_probe_failed;
 	}
 
-	status = etspi_set_timer(etspi);
-	if (status)
-		goto etspi_sysfs_failed;
-	etspi_enable_debug_timer();
-
 #ifdef FP_DDR_FREQ_CONTROL
 	// register ddr freq setting table
 	fill_bus_vector();
@@ -1354,7 +1299,6 @@ static int etspi_remove(struct spi_device *spi)
 		}
 #endif
 
-		etspi_disable_debug_timer();
 		etspi_platformUninit(etspi);
 
 		/* make sure ops on existing fds can abort cleanly */
@@ -1379,10 +1323,7 @@ static int etspi_remove(struct spi_device *spi)
 
 static int etspi_pm_suspend(struct device *dev)
 {
-	pr_info("%s\n", __func__);
-
 	if (g_data != NULL) {
-		etspi_disable_debug_timer();
 		if (!g_data->drdy_irq_flag) {
 			g_data->drdy_irq_flag = DRDY_IRQ_DISABLE;
 		}
@@ -1392,10 +1333,6 @@ static int etspi_pm_suspend(struct device *dev)
 
 static int etspi_pm_resume(struct device *dev)
 {
-	pr_info("%s\n", __func__);
-	if (g_data != NULL) {
-		etspi_enable_debug_timer();
-	}
 	return 0;
 }
 

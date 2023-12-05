@@ -97,17 +97,18 @@ extern bool enable_pr_debug;
 
 #define LOG_KEYWORD "[SDE]"
 
-#define LCD_DEBUG(X, ...)	\
+#define LCD_DEBUG(X, ...) /*	\
 		do {	\
 			if (enable_pr_debug)	\
 				pr_info("%s %s : "X, LOG_KEYWORD, __func__, ## __VA_ARGS__);\
 			else	\
 				pr_debug("%s %s : "X, LOG_KEYWORD, __func__, ## __VA_ARGS__);\
 		} while (0)	\
+*/
 
-#define LCD_INFO(X, ...) pr_info("%s %s : "X, LOG_KEYWORD, __func__, ## __VA_ARGS__)
-#define LCD_INFO_ONCE(X, ...) pr_info_once("%s %s : "X, LOG_KEYWORD, __func__, ## __VA_ARGS__)
-#define LCD_ERR(X, ...) pr_err("%s %s : "X, LOG_KEYWORD, __func__, ## __VA_ARGS__)
+#define LCD_INFO(X, ...) //pr_info("%s %s : "X, LOG_KEYWORD, __func__, ## __VA_ARGS__)
+#define LCD_INFO_ONCE(X, ...) //pr_info_once("%s %s : "X, LOG_KEYWORD, __func__, ## __VA_ARGS__)
+#define LCD_ERR(X, ...) //pr_err("%s %s : "X, LOG_KEYWORD, __func__, ## __VA_ARGS__)
 
 #define MAX_PANEL_NAME_SIZE 100
 

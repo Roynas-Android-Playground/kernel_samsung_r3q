@@ -21,12 +21,12 @@
 #include <linux/msm-bus-board.h>
 #include <linux/msm-bus.h>
 
-#define MSM_BUS_DBG(msg, ...) \
-	pr_debug(msg, ## __VA_ARGS__)
-#define MSM_BUS_ERR(msg, ...) \
-	pr_err(msg, ## __VA_ARGS__)
-#define MSM_BUS_WARN(msg, ...) \
-	pr_warn(msg, ## __VA_ARGS__)
+#define MSM_BUS_DBG(msg, ...) /*\
+	pr_debug(msg, ## __VA_ARGS__)*/
+#define MSM_BUS_ERR(msg, ...) /*\
+	pr_err(msg, ## __VA_ARGS__)*/
+#define MSM_BUS_WARN(msg, ...) /*\
+	pr_warn(msg, ## __VA_ARGS__)*/
 #define MSM_FAB_ERR(msg, ...) \
 	dev_err(&fabric->fabdev.dev, msg, ## __VA_ARGS__)
 

@@ -1315,4 +1315,6 @@ config TOUCHSCREEN_RAYDIUM_CHIPSET
 
 source "drivers/input/touchscreen/imagis/ist40xx/Kconfig"
 source "drivers/input/touchscreen/melfas/mss100/Kconfig"
+source "drivers/input/touchscreen/focaltech_touch/Kconfig"
+
 endif

@@ -123,3 +123,6 @@ obj-$(CONFIG_TOUCHSCREEN_FTS9CU80F_B)		+= stm/fts9cu80f_b/
 obj-$(CONFIG_TOUCHSCREEN_FTS1BA90A)		+= stm/fts1ba90a/
 obj-$(CONFIG_TOUCHSCREEN_IST40XX)	+= imagis/ist40xx/
 obj-$(CONFIG_TOUCHSCREEN_MELFAS_MSS100)	+= melfas/mss100/
+obj-$(CONFIG_TOUCHSCREEN_RASPBERRYPI_FW)	+= raspberrypi-ts.o
+obj-$(CONFIG_TOUCHSCREEN_IQS5XX)	+= iqs5xx.o
+obj-$(CONFIG_TOUCHSCREEN_FTS)	+= focaltech_touch/

@@ -154,9 +154,9 @@ config F2FS_REPORT_FAKE_KERNEL_VERSION
 config F2FS_FAKE_KERNEL_RELEASE
 	string "Kernel release for fsck.f2fs"
 	depends on F2FS_REPORT_FAKE_KERNEL_VERSION
-	default "6.6.4"
+	default "6.6.4-arm64v2-xanmod1-1"
 
 config F2FS_FAKE_KERNEL_VERSION
 	string "Kernel version for fsck.f2fs"
 	depends on F2FS_REPORT_FAKE_KERNEL_VERSION
-	default "-arm64v2-xanmod1-1"
+	default "#1 SMP PREEMPT_DYNAMIC Mon, 04 Dec 2023 13:06:11 +0000"

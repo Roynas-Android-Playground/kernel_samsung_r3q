@@ -5660,7 +5660,7 @@ static int dwc3_msm_runtime_suspend(struct device *dev)
 	struct dwc3_msm *mdwc = dev_get_drvdata(dev);
 	struct dwc3 *dwc = platform_get_drvdata(mdwc->dwc3);
 
-	dev_dbg(dev, "DWC3-msm runtime suspend\n");
+	dev_info(dev, "DWC3-msm runtime suspend\n");
 	dbg_event(0xFF, "RT Sus", 0);
 
 	return dwc3_msm_suspend(mdwc, false, true);
@@ -5671,7 +5671,7 @@ static int dwc3_msm_runtime_resume(struct device *dev)
 	struct dwc3_msm *mdwc = dev_get_drvdata(dev);
 	struct dwc3 *dwc = platform_get_drvdata(mdwc->dwc3);
 
-	dev_dbg(dev, "DWC3-msm runtime resume\n");
+	dev_info(dev, "DWC3-msm runtime resume\n");
 	dbg_event(0xFF, "RT Res", 0);
 
 	return dwc3_msm_resume(mdwc);

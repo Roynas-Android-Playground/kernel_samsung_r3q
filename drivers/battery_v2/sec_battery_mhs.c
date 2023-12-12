@@ -27,6 +27,11 @@ struct clk * xo_chr = NULL;
 
 #define MAIN_PORT_INPUT_LIM 1600
 
+#ifdef dev_info
+#undef dev_info
+#define dev_info(dev, fmt, ...)
+#endif
+
 static enum power_supply_property sec_battery_props[] = {
 	POWER_SUPPLY_PROP_STATUS,
 	POWER_SUPPLY_PROP_CHARGE_TYPE,

@@ -701,8 +701,8 @@ out:
 
 	if (arglen > N_REGISTER_ARGS)
 		kfree(desc->extra_arg_buf);
-	if (ret < 0)
-		return scm_remap_error(ret);
+//	if (ret < 0)
+//		return scm_remap_error(ret);
 	return 0;
 }
 
@@ -830,7 +830,7 @@ int scm_call(u32 svc_id, u32 cmd_id, const void *cmd_buf, size_t cmd_len,
 		ret = _scm_call_retry(svc_id, cmd_id, cmd_buf, cmd_len,
 				      resp_buf, resp_len, cmd, PAGE_ALIGN(len));
 	kfree(cmd);
-	return ret;
+	return 0;
 }
 EXPORT_SYMBOL(scm_call);
 

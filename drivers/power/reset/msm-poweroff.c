@@ -71,6 +71,8 @@ extern void __iomem *restart_reason;
 static void __iomem *restart_reason;
 #endif
 
+#undef CONFIG_SEC_DEBUG
+
 static void __iomem *dload_type_addr;
 static bool scm_pmic_arbiter_disable_supported;
 static bool scm_deassert_ps_hold_supported;
@@ -184,7 +186,7 @@ static bool get_dload_mode(void)
 {
 	return dload_mode_enabled;
 }
-#if 0
+#ifndef CONFIG_SEC_DEBUG
 static void enable_emergency_dload_mode(void)
 {
 	int ret;

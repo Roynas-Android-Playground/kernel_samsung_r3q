@@ -974,12 +974,12 @@ err:
 	return -EINVAL;
 }
 
-#if DEBUG
 #define S2MU107_REG_RSOCR	0x82
 #define S2MU107_REG_RSOH	0x84
 #define S2MU107_REG_RRM		0x8A
 #define S2MU107_REG_RFCC	0x8C
 
+#ifdef DEBUG
 static int s2mu107_get_socr(struct s2mu107_fuelgauge_data *fuelgauge)
 {
 	u8 data[2];
@@ -1009,6 +1009,7 @@ err:
 	mutex_unlock(&fuelgauge->fg_lock);
 	return -EINVAL;
 }
+#endif
 
 static int s2mu107_get_soh(struct s2mu107_fuelgauge_data *fuelgauge)
 {
@@ -1040,6 +1041,7 @@ err:
 	return -EINVAL;
 }
 
+#ifdef DEBUG
 static int s2mu107_get_rm(struct s2mu107_fuelgauge_data *fuelgauge)
 {
 	u8 data[2];
@@ -1160,7 +1162,7 @@ static int s2mu107_get_soc(struct s2mu107_fuelgauge_data *fuelgauge)
 	/* Fuel guage mode control */
 	s2mu107_fg_update_mode(fuelgauge);
 
-#if DEBUG
+#ifdef DEBUG
 	/* TODO: Print information */
 	fuelgauge->socr = s2mu107_get_socr(fuelgauge);
 	fuelgauge->soh = s2mu107_get_soh(fuelgauge);

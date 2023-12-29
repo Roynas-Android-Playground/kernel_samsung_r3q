@@ -12,6 +12,7 @@
 
 struct sec_ts_data *tsp_info;
 
+#include <linux/proc_fs.h>
 #include "sec_ts.h"
 
 struct sec_ts_data *ts_dup;

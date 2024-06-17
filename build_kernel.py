@@ -83,6 +83,7 @@ def main():
     parser = argparse.ArgumentParser(description="Build Grass Kernel with specified arguments")
     
     parser.add_argument('--allow-dirty', action='store_true', help="Allow dirty build")
+    parser.add_argument('--thin', action='store_true', help="Use ThinLTO for build")
 
     # Parse the arguments
     args = parser.parse_args()
@@ -118,6 +119,8 @@ def main():
                    'CROSS_COMPILE=aarch64-linux-gnu-', f'-j{os.cpu_count()}']
     make_defconfig += make_common 
     make_defconfig += ['r3q_defconfig']
+    if args.thin:
+        make_defconfig += ['thinlto.config']
     
     t = datetime.now()
     print('Make defconfig...')

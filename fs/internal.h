@@ -66,6 +66,7 @@ extern struct vfsmount *lookup_mnt(const struct path *);
 extern int finish_automount(struct vfsmount *, struct path *);
 
 extern int sb_prepare_remount_readonly(struct super_block *);
+extern int path_umount(struct path *path, int flags);
 
 extern void __init mnt_init(void);
 
